@@ -1,5 +1,5 @@
 CREATE TABLE patients (
-  id INT PRIMARY KEY,
+  id SERIAL NOT NULL PRIMARY KEY,
   full_name VARCHAR(50) NOT NULL,
   gender VARCHAR(1) NOT NULL,
   date_of_birth DATE NOT NULL,
