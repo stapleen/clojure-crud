@@ -16,11 +16,15 @@
         full-name (get-in request [:body "full_name"])
         gender (get-in request [:body "gender"])
         date-of-birth (get-in request [:body "date_of_birth"])
-        date-of-birth-convert-date (java.sql.Date/valueOf date-of-birth)]
+        date-of-birth-convert-date (java.sql.Date/valueOf date-of-birth)
+        current-date (.getTime (java.util.Date.))
+        current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)]
 
-    (jdbc/insert! db :patients {:full_name full-name :gender gender :date_of_birth date-of-birth-convert-date})
-    (response {:success 1})
-    ))
+    (jdbc/insert! db :patients {:full_name full-name
+                                :gender gender
+                                :date_of_birth date-of-birth-convert-date
+                                :created_at current-date-convert-date})
+    (response {:success 1})))
    
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
