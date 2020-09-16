@@ -26,8 +26,13 @@
                                 :created_at current-date-convert-date})
     (response {:success 1})))
    
+(defn get-patients [request]
+(let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth FROM patients"])]
+ (response {:success 1 :result patients-list})))
+
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
+  (GET "/get" [] (middleware/wrap-json-response get-patients))
   (route/not-found "<h1>Page not found</h1>"))
 
 (defn -main []
