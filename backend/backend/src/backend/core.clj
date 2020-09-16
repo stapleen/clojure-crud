@@ -27,13 +27,22 @@
     (response {:success 1})))
    
 (defn get-patients [request]
-(let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth FROM patients"])]
+(let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth FROM patients WHERE deleted=false"])]
  (response {:success 1 :result patients-list})))
+
+(defn delete-patient [request]
+    (let [body (get-in request [:body])
+          patient-id (get-in request [:body "id"])
+          current-date (.getTime (java.util.Date.))
+          current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)]
+
+      (jdbc/update! db :patients {:deleted true :updated_at current-date-convert-date} ["id = ?" patient-id])
+      (response {:success 1})))
 
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
   (GET "/get" [] (middleware/wrap-json-response get-patients))
-  (route/not-found "<h1>Page not found</h1>"))
+  (DELETE "/delete" [] (-> delete-patient middleware/wrap-json-body middleware/wrap-json-response)))
 
 (defn -main []
   (jetty/run-jetty app {:port 3000}))
