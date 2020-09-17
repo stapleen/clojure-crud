@@ -39,10 +39,31 @@
       (jdbc/update! db :patients {:deleted true :updated_at current-date-convert-date} ["id = ?" patient-id])
       (response {:success 1})))
 
+(defn update-patient-data [request]
+  (let [body (get-in request [:body])
+        id (get-in request [:body "id"])
+        full-name (get-in request [:body "full_name"])
+        gender (get-in request [:body "gender"])
+        date-of-birth (get-in request [:body "date_of_birth"])
+        date-of-birth-convert-date (if (nil? date-of-birth) nil (java.sql.Date/valueOf date-of-birth))
+        current-date (.getTime (java.util.Date.))
+        current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)
+        ]
+
+    (jdbc/execute! db
+                   ["UPDATE patients SET full_name = COALESCE(?, full_name),
+                   gender = COALESCE(?, gender),
+                   date_of_birth = COALESCE(?, date_of_birth),
+                   updated_at = ?
+                   WHERE id = ?" full-name gender date-of-birth-convert-date current-date-convert-date id])
+
+    (response {:success 1})))
+
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
   (GET "/get" [] (middleware/wrap-json-response get-patients))
-  (DELETE "/delete" [] (-> delete-patient middleware/wrap-json-body middleware/wrap-json-response)))
+  (DELETE "/delete" [] (-> delete-patient middleware/wrap-json-body middleware/wrap-json-response))
+  (PATCH "/update" [] (-> update-patient-data middleware/wrap-json-body middleware/wrap-json-response)))
 
 (defn -main []
   (jetty/run-jetty app {:port 3000}))
