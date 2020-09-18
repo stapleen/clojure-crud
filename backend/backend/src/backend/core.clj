@@ -26,12 +26,14 @@
                                   :date_of_birth date-of-birth-convert-date
                                   :created_at current-date-convert-date})
       (response {:success 1}))
+
     (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
    
 (defn get-patients [request]
 (try
   (let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth FROM patients WHERE deleted=false"])]
     (response {:success 1 :result patients-list}))
+    
   (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
 
 (defn delete-patient [request]
@@ -39,10 +41,13 @@
    (let [body (get-in request [:body])
          patient-id (get-in request [:body "id"])
          current-date (.getTime (java.util.Date.))
-         current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)]
+         current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)
+         query-result (jdbc/update! db :patients {:deleted true :updated_at current-date-convert-date} ["id = ?" patient-id])]
 
-     (jdbc/update! db :patients {:deleted true :updated_at current-date-convert-date} ["id = ?" patient-id])
-     (response {:success 1}))
+     (if (zero? (first query-result))
+      (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
+      (response {:success 1})))
+
    (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
 
 (defn update-patient-data
@@ -55,16 +60,18 @@
           date-of-birth (get-in request [:body "date_of_birth"])
           date-of-birth-convert-date (if (nil? date-of-birth) nil (java.sql.Date/valueOf date-of-birth))
           current-date (.getTime (java.util.Date.))
-          current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)]
-
-      (jdbc/execute! db
-                     ["UPDATE patients SET full_name = COALESCE(?, full_name),
+          current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)
+          query-result (jdbc/execute! db
+                                      ["UPDATE patients SET full_name = COALESCE(?, full_name),
                    gender = COALESCE(?, gender),
                    date_of_birth = COALESCE(?, date_of_birth),
                    updated_at = ?
-                   WHERE id = ?" full-name gender date-of-birth-convert-date current-date-convert-date id])
+                   WHERE id = ?" full-name gender date-of-birth-convert-date current-date-convert-date id])]
 
-      (response {:success 1}))
+      (if (zero? (first query-result))
+        (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
+        (response {:success 1})))
+
     (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
 
 (defroutes app
