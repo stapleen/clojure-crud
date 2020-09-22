@@ -12,3 +12,12 @@ backend/backend/.prepl-port
 backend/backend/.hgignore
 backend/backend/.hg/
 backend/backend/src/backend/config.clj
+
+frontend/node_modules
+frontend/public/js
+frontend/out
+frontend/.shadow-cljs
+frontend/.nrepl-port
+frontend/.clj-kondo/.cache
+frontend/yarn-error.log
+frontend/report.html
