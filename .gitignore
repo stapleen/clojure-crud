@@ -1,0 +1,14 @@
+backend/backend/target
+backend/backend/classes
+backend/backend/checkouts
+backend/backend/profiles.clj
+backend/backend/pom.xml
+backend/backend/pom.xml.asc
+backend/backend/*.jar
+backend/backend/*.class
+backend/backend/.lein-*
+backend/backend/.nrepl-port
+backend/backend/.prepl-port
+backend/backend/.hgignore
+backend/backend/.hg/
+backend/backend/src/backend/config.clj
