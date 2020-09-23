@@ -13,11 +13,19 @@ backend/backend/.hgignore
 backend/backend/.hg/
 backend/backend/src/backend/config.clj
 
-frontend/node_modules
+frontend/target
+frontend/classes
+frontend/checkouts
+frontend/profiles.clj
+frontend/pom.xml
+frontend/pom.xml.asc
+frontend/*.jar
+frontend/*.class
+frontend/.lein-*
+frontend/.nrepl-port
+frontend/resources/public/js
 frontend/public/js
 frontend/out
-frontend/.shadow-cljs
-frontend/.nrepl-port
-frontend/.clj-kondo/.cache
-frontend/yarn-error.log
-frontend/report.html
+frontend/.repl
+frontend/*.log
+frontend/.env
