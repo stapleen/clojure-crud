@@ -1,19 +1,14 @@
 (ns frontend.core
-    (:require
-      [reagent.core :as r]
-      [reagent.dom :as d]))
-
-;; -------------------------
-;; Views
-
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require
+   [reagent.core :as r]
+   [reagent.dom :as d]
+   [cljs-http.client :as http]
+   [cljs.core.async :refer [<!]]))
+  
 (defn home-page []
-  [:div [:h2 "Welcome to Reagent"]])
-
-;; -------------------------
-;; Initialize app
-
-(defn mount-root []
-  (d/render [home-page] (.getElementById js/document "app")))
+  (go (let [p (<! (http/get "http://localhost:3000/get"))]
+        (println "p" p))))
 
 (defn init! []
-  (mount-root))
+  (d/render [home-page] (.getElementById js/document "app")))

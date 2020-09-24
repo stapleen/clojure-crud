@@ -6,7 +6,9 @@
             [clojure.java.jdbc :as jdbc]
             [backend.config :as config]
             [ring.middleware.json :as middleware]
-            [ring.util.response :refer [response]]))
+            [ring.util.response :refer [response]]
+            [ring.middleware.cors :refer [wrap-cors]]
+            ))
 
 (def db config/db-config)
 
@@ -76,9 +78,9 @@
 
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
-  (GET "/get" [] (middleware/wrap-json-response get-patients))
+  (GET "/get" [] (-> get-patients middleware/wrap-json-response))
   (DELETE "/delete" [] (-> delete-patient middleware/wrap-json-body middleware/wrap-json-response))
   (PATCH "/update" [] (-> update-patient-data middleware/wrap-json-body middleware/wrap-json-response)))
 
 (defn -main []
-  (jetty/run-jetty app {:port 3000}))
+  (jetty/run-jetty (-> app (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get] :access-control-allow-credentials ["true"])) {:port 3000}))
