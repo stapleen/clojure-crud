@@ -6,21 +6,6 @@
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]))
 
-;; (defn render-patients [id]
-;;   (println "id" id "type id" (type id))
-;;   [:p id])
-
-;; (defn get-patients []
-;;   (go (let [response (<! (http/get "http://localhost:3000/get"))
-;;             patients (get-in response [:body :result])
-;;             first-patient (first patients)
-;;             id (get-in first-patient [:id])]
-;;         (render-patients id))))
-
-;; (defn start []
-;;   (let [id "Hi"]
-;;     [render-patients id]))
-
 (defn patients
   []
   (let [patient (r/atom nil)]
@@ -32,19 +17,26 @@
       (fn [this]
         (go (let [response (<! (http/get "http://localhost:3000/get"))
                   result (get-in response [:body :result])]
-              (swap! patient result)
-              (println "patient" patient))))
-
-
+              ;; (reset! patient result) для нескольких пациентов
+              (swap! patient result))))
+              
 
 
       :reagent-render        
-      (fn []           
-        [:div (str @patient)])})))
+      (fn []
 
-;; (r/render
-;;  [patients]         
-;;  (.-body js/document))
+
+        (let [id (get-in @patient [:id])
+              full-name (get-in @patient [:full-name])
+              gender (get-in @patient [:gender])
+              date_of_birth (get-in @patient [:date_of_birth])]
+          (println "id" id "full-name" full-name "gender" gender "date_of_birth" date_of_birth)
+          [:div
+           [:p "id: " id]
+           [:p "full-name: " full-name]
+           [:p "gender: " gender]
+           [:p "date_of_birth: " date_of_birth]]))})))
+
 
 (defn homepage []
   [:div
