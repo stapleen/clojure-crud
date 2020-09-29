@@ -10,7 +10,7 @@
   (let [id (r/atom 11)
         full-name (r/atom "Vadim krikoten")
         gender (r/atom "M")
-        date_of_birth (r/atom "2015-10-09T21:00:00Z")]
+        date_of_birth (r/atom "2015-10-09")]
 
     (r/create-class
      {:display-name  "patient-edit"
@@ -32,5 +32,12 @@
           [:input {:type "text" :value @date_of_birth :on-change #(reset! date_of_birth (-> % .-target .-value))}]]
 
          [:div
-          [:input {:type "button" :value "Сохранить" :on-click (fn [] (println "name" full-name "gender" gender "date_of_birth" date_of_birth))}]
+          [:input {:type "button"
+                   :value "Сохранить"
+                   :on-click (fn []
+                               (go (let [response (<! (http/post "http://localhost:3000/update"  {:json-params {:id @id :full_name @full-name :gender @gender :date_of_birth @date_of_birth}}))
+                                         success (get-in response [:body :success])
+                                         result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
+                                     (println "response" result)))
+                               )}]
           [:input {:type "button" :value "Отмена"}]]])})))

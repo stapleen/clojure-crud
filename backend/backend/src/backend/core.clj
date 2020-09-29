@@ -7,8 +7,7 @@
             [backend.config :as config]
             [ring.middleware.json :as middleware]
             [ring.util.response :refer [response]]
-            [ring.middleware.cors :refer [wrap-cors]]
-            ))
+            [ring.middleware.cors :refer [wrap-cors]]))
 
 (def db config/db-config)
 
@@ -55,6 +54,7 @@
 (defn update-patient-data
   [request]
   (try
+    (println "request" request)
     (let [body (get-in request [:body])
           id (get-in request [:body "id"])
           full-name (get-in request [:body "full_name"])
@@ -72,7 +72,7 @@
 
       (if (zero? (first query-result))
         (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
-        (response {:success 1})))
+        (response {:success 1 :result "Успешно"})))
 
     (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
 
@@ -83,4 +83,4 @@
   (POST "/update" [] (-> update-patient-data middleware/wrap-json-body middleware/wrap-json-response)))
 
 (defn -main []
-  (jetty/run-jetty (-> app (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get] :access-control-allow-credentials ["true"])) {:port 3000}))
+  (jetty/run-jetty (-> app (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post] :access-control-allow-credentials ["true"])) {:port 3000}))
