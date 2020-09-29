@@ -2,15 +2,13 @@
   (:require
    [reagent.dom :as d]
    [frontend.patients :as patients]
+   [frontend.patient.edit :as edit]
    ))
 
 (defn app []
   [:div
-   [:h1 "Welcome"]
-   [patients/component]
+   [edit/component]
    ])
 
 (defn init! []
   (d/render [app] (.getElementById js/document "app")))
-
-
