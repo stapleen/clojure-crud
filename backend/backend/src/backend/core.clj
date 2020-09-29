@@ -80,7 +80,7 @@
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
   (GET "/get" [] (-> get-patients middleware/wrap-json-response))
   (DELETE "/delete" [] (-> delete-patient middleware/wrap-json-body middleware/wrap-json-response))
-  (PATCH "/update" [] (-> update-patient-data middleware/wrap-json-body middleware/wrap-json-response)))
+  (POST "/update" [] (-> update-patient-data middleware/wrap-json-body middleware/wrap-json-response)))
 
 (defn -main []
   (jetty/run-jetty (-> app (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get] :access-control-allow-credentials ["true"])) {:port 3000}))
