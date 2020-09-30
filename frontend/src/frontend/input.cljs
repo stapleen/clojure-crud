@@ -1,6 +1,4 @@
-(ns frontend.input
-  (:require
-   [reagent.core :as r]))
+(ns frontend.input)
 
 (defn component
   [label value func]

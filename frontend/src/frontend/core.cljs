@@ -9,7 +9,7 @@
 
 (defn app []
   [:div
-   [add/component]
+   [patients/component]
    ])
 
 (defn init! []
