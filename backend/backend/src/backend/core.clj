@@ -26,7 +26,7 @@
                                   :gender gender
                                   :date_of_birth date-of-birth-convert-date
                                   :created_at current-date-convert-date})
-      (response {:success 1}))
+      (response {:success 1 :result "Успешно"}))
 
     (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
    
@@ -54,7 +54,6 @@
 (defn update-patient-data
   [request]
   (try
-    (println "request" request)
     (let [body (get-in request [:body])
           id (get-in request [:body "id"])
           full-name (get-in request [:body "full_name"])
