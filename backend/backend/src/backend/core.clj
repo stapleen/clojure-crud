@@ -47,7 +47,7 @@
 
      (if (zero? (first query-result))
       (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
-      (response {:success 1})))
+      (response {:success 1 :result "Успешно"})))
 
    (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
 
@@ -78,7 +78,7 @@
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
   (GET "/get" [] (-> get-patients middleware/wrap-json-response))
-  (DELETE "/delete" [] (-> delete-patient middleware/wrap-json-body middleware/wrap-json-response))
+  (POST "/delete" [] (-> delete-patient middleware/wrap-json-body middleware/wrap-json-response))
   (POST "/update" [] (-> update-patient-data middleware/wrap-json-body middleware/wrap-json-response)))
 
 (defn -main []
