@@ -1,9 +1,9 @@
 (ns frontend.core
-  (:require-macros [secretary.core :refer [defroute]])
-  (:import goog.history.Html5History)
-  (:require [secretary.core :as secretary]
+(:import [goog History]
+           [goog.history EventType])
+  (:require 
+            [secretary.core :as secretary :refer-macros [defroute]]
             [goog.events :as events]
-            [goog.history.EventType :as EventType]
             [reagent.core :as reagent]
             [reagent.dom :as d]
             [frontend.patients :as patients]
@@ -12,13 +12,13 @@
 
 (def app-state (reagent/atom {}))
 
-(defn hook-browser-navigation! []
-  (doto (Html5History.)
-    (events/listen
-     EventType/NAVIGATE
-     (fn [event]
-       (secretary/dispatch! (.-token event))))
-    (.setEnabled true)))
+; (defn hook-browser-navigation! []
+;   (doto (Html5History.)
+;     (events/listen
+;      EventType/NAVIGATE
+;      (fn [event]
+;        (secretary/dispatch! (.-token event))))
+;     (.setEnabled true)))
 
 (defn app-routes []
   (secretary/set-config! :prefix "")
@@ -29,10 +29,13 @@
   (defroute "/new" []
     (swap! app-state assoc :page :new))
 
-  (defroute "/edit" []
-    (swap! app-state assoc :page :edit))
+  (defroute "/edit/:id" [id]
+    (swap! app-state assoc :page :edit :id id))
 
-  (hook-browser-navigation!))
+    (doto (History.)
+      (events/listen EventType.NAVIGATE #(secretary/dispatch! (.-token %)))
+      (.setEnabled true))
+)
 
 (defn home []
   [patients/component])
@@ -40,8 +43,8 @@
 (defn new []
   [add/component])
 
-(defn edit []
-  [edit/component])
+(defn edit [id]
+  [edit/component id])
 
 (defmulti current-page #(@app-state :page))
 
@@ -52,7 +55,8 @@
   [new])
 
 (defmethod current-page :edit []
-  [edit])
+  (println "1" (get-in @app-state [:id]))
+  [edit "test"])
 
 (defn init! []
   (app-routes)

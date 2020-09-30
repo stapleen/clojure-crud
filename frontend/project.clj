@@ -8,7 +8,7 @@
                  [org.clojure/clojurescript "1.10.773"]
                  [reagent "0.10.0"]
                  [cljs-http "0.1.46"]
-                 [secretary "1.2.3"]]
+                 [clj-commons/secretary "1.2.4"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.20"]]

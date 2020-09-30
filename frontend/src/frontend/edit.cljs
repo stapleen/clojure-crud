@@ -8,17 +8,18 @@
    [frontend.select :as select]))
 
 (defn component
-  []
+  [idid]
   (let [id (r/atom 11)
         full-name (r/atom "Vadim krikoten")
         gender (r/atom "M")
         date_of_birth (r/atom "2015-10-09")]
-
+(println idid)
     (r/create-class
      {:display-name  "patient-edit"
 
       :reagent-render
       (fn []
+      
         [:div
          [:h1 "Редактирование"]
 
