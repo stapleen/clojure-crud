@@ -32,4 +32,4 @@
                                          result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
                                      (println "response" result)))
                                )}]
-          [:input {:type "button" :value "Отмена"}]]])})))
+         [:input {:type "button" :value "Отмена" :on-click (fn [] (set! (.. js/document -location -href) "#/"))}]]])})))

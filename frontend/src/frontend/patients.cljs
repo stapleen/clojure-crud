@@ -5,6 +5,7 @@
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]))
 
+
 (defn component
   []
   (let [patient (r/atom nil)]
@@ -31,16 +32,18 @@
               date_of_birth (get-in @patient [:date_of_birth])]
 
           [:div
-          [:div
-           [:input {:type "button" :value "Редактировать"}]
-           [:input {:type "button"
-                    :value "Удалить"
-                    :on-click (fn []
-                                (go (let [response (<! (http/post "http://localhost:3000/delete"  {:json-params {:id id}}))
-                                          success (get-in response [:body :success])
-                                          result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
-                                      (println "response" result))))}]]
-          
+           [:input {:type "button" :value "Добавить пациента" :on-click (fn [] (set! (.. js/document -location -href) "#/new"))}]
+           
+           [:div
+            [:input {:type "button" :value "Редактировать" :on-click (fn [] (set! (.. js/document -location -href) "#/edit"))}]
+            [:input {:type "button"
+                     :value "Удалить"
+                     :on-click (fn []
+                                 (go (let [response (<! (http/post "http://localhost:3000/delete"  {:json-params {:id id}}))
+                                           success (get-in response [:body :success])
+                                           result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
+                                       (println "response" result))))}]]
+
            [:p "id: " id]
            [:p "full-name: " full-name]
            [:p "gender: " gender]
