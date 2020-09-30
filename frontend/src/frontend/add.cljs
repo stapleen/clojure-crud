@@ -4,7 +4,8 @@
    [reagent.core :as r]
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
-   [frontend.input :as input]))
+   [frontend.input :as input]
+   [frontend.select :as select]))
 
 (defn component
   []
@@ -19,9 +20,9 @@
       (fn []
         [:div
          [:h1 "Добавление пациента"]
-         [input/component "full-name " @full-name #(reset! full-name (-> % .-target .-value))]
-         [input/component "gender " @gender #(reset! gender (-> % .-target .-value))]
-         [input/component "date_of_birth " @date_of_birth #(reset! date_of_birth (-> % .-target .-value))]
+         [input/component "text" "full-name " @full-name #(reset! full-name (-> % .-target .-value))]
+         [select/component "gender " #(reset! gender (-> % .-target .-value))]
+         [input/component "date" "date_of_birth " @date_of_birth #(reset! date_of_birth (-> % .-target .-value))]
 
          [:div
           [:input {:type "button"
@@ -30,6 +31,5 @@
                                (go (let [response (<! (http/post "http://localhost:3000/add"  {:json-params {:full_name @full-name :gender @gender :date_of_birth @date_of_birth}}))
                                          success (get-in response [:body :success])
                                          result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
-                                     (println "response" result)))
-                               )}]
-         [:input {:type "button" :value "Отмена" :on-click (fn [] (set! (.. js/document -location -href) "#/"))}]]])})))
+                                     (println "response" result))))}]
+          [:input {:type "button" :value "Отмена" :on-click (fn [] (set! (.. js/document -location -href) "#/"))}]]])})))

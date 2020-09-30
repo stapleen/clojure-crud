@@ -4,7 +4,8 @@
    [reagent.core :as r]
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
-   [frontend.input :as input]))
+   [frontend.input :as input]
+   [frontend.select :as select]))
 
 (defn component
   []
@@ -21,10 +22,10 @@
         [:div
          [:h1 "Редактирование"]
 
-         [input/component "full-name " @full-name #(reset! full-name (-> % .-target .-value))]
-         [input/component "gender " @gender #(reset! gender (-> % .-target .-value))]
-         [input/component "date_of_birth " @date_of_birth #(reset! date_of_birth (-> % .-target .-value))]
-
+         [input/component "text" "full-name " @full-name #(reset! full-name (-> % .-target .-value))]
+         [select/component "gender " #(reset! gender (-> % .-target .-value))]
+         [input/component "date" "date_of_birth " @date_of_birth #(reset! date_of_birth (-> % .-target .-value))]
+         
          [:div
           [:input {:type "button"
                    :value "Сохранить"

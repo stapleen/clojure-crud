@@ -44,7 +44,6 @@
                                            result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
                                        (println "response" result))))}]]
 
-           [:p "id: " id]
            [:p "full-name: " full-name]
            [:p "gender: " gender]
            [:p "date_of_birth: " date_of_birth]]))})))
