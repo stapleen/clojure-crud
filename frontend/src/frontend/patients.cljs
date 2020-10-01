@@ -27,13 +27,13 @@
                           gender (get-in % [:gender])
                           date_of_birth (get-in % [:date_of_birth])]
 
-                      [:tr
+                      [:tr {:key id}
                        [:td full-name]
                        [:td gender]
                        [:td date_of_birth]
                        [:td [:input {:type "button"
                                      :value "Редактировать"
-                                     :on-click (fn [] (set! (.. js/document -location -href) "#/edit/10"))}]]
+                                     :on-click (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))}]]
                        [:td [:input {:type "button"
                                      :value "Удалить"
                                      :on-click 

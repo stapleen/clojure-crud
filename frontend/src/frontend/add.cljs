@@ -28,7 +28,7 @@
           [:input {:type "button"
                    :value "Добавить"
                    :on-click (fn []
-                               (go (let [response (<! (http/post "http://localhost:3000/add"  {:json-params {:full-name @full-name :gender @gender :date-of-birth @date-of-birth}}))
+                               (go (let [response (<! (http/post "http://localhost:3000/add"  {:json-params {:full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
                                          success (get-in response [:body :success])
                                          result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
                                      (println "response" result))))}]
