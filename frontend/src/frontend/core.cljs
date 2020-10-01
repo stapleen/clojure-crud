@@ -6,9 +6,9 @@
             [goog.events :as events]
             [reagent.core :as reagent]
             [reagent.dom :as d]
-            [frontend.patients :as patients]
-            [frontend.patient.edit :as edit]
-            [frontend.patient.add :as add]))
+            [frontend.components.patients :as patients]
+            [frontend.components.patient.edit :as edit]
+            [frontend.components.patient.add :as add]))
 
 (def app-state (reagent/atom {}))
 

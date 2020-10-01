@@ -1,4 +1,4 @@
-(ns frontend.patients
+(ns frontend.components.patients
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [reagent.core :as r]

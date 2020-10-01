@@ -1,4 +1,4 @@
-(ns frontend.select)
+(ns frontend.components.select)
 
 (defn component
   [label value func]

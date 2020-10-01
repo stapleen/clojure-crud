@@ -1,11 +1,11 @@
-(ns frontend.patient.add
+(ns frontend.components.patient.add
   (:require-macros [cljs.core.async.macros :refer [go]])
   (:require
    [reagent.core :as r]
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
-   [frontend.input :as input]
-   [frontend.select :as select]))
+   [frontend.components.input :as input]
+   [frontend.components.select :as select]))
 
 (defn component
   []

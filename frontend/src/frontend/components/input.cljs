@@ -1,4 +1,4 @@
-(ns frontend.input)
+(ns frontend.components.input)
 
 (defn component
   [type label value func]
