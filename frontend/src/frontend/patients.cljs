@@ -40,9 +40,8 @@
                                      (fn []
                                        (go (let [response (<! (http/post "http://localhost:3000/delete"
                                                                          {:json-params {:id id}}))
-                                                 success (get-in response [:body :success])
-                                                 result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
-                                             (println "response" result))))}]]])
+                                                 success (get-in response [:body :success])]
+                                             (if (zero? success) (println (get-in response [:body :error])) (reset! patients (filterv (fn [x] (not= (get-in x [:id]) id)) @patients))))))}]]])
                    @patients)]
           [:div
            [:input {:type "button" :value "Добавить пациента" :on-click (fn [] (set! (.. js/document -location -href) "#/new"))}]
