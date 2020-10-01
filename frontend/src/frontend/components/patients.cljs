@@ -5,7 +5,6 @@
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]))
 
-
 (defn component
   []
   (let [patients (r/atom nil)
@@ -53,7 +52,11 @@
           
           (if (true? @loading) [:p "Загрузка"]
               (if (empty? patients-list)
-                [:p "Список пациентов пуст"]
+                [:div
+                 [:input {:type "button"
+                          :value "Добавить пациента"
+                          :on-click (fn [] (set! (.. js/document -location -href) "#/new"))}]
+                 [:p "Список пациентов пуст"]]
                 [:div
                  [:input {:type "button"
                           :value "Добавить пациента"
