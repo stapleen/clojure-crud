@@ -33,9 +33,9 @@
 
           [:div
            [:input {:type "button" :value "Добавить пациента" :on-click (fn [] (set! (.. js/document -location -href) "#/new"))}]
-           
+
            [:div
-            [:input {:type "button" :value "Редактировать" :on-click (fn [] (set! (.. js/document -location -href) "#/edit/123"))}]
+            [:input {:type "button" :value "Редактировать" :on-click (fn [] (set! (.. js/document -location -href) "#/edit/10"))}]
             [:input {:type "button"
                      :value "Удалить"
                      :on-click (fn []

@@ -37,6 +37,17 @@
     
   (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
 
+(defn get-patient [request]
+  (try
+    (let
+     [body (get-in request [:body])
+      id (get-in request [:body "id"])
+      patient (jdbc/query db ["SELECT id, full_name, gender, date_of_birth FROM patients WHERE id = ? AND deleted=false" id])]
+      (response {:success 1 :result patient}))
+
+    (catch Exception e (response
+                        {:success 0 :error "Произошла ошибка"}))))
+
 (defn delete-patient [request]
  (try
    (let [body (get-in request [:body])
@@ -78,6 +89,7 @@
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
   (GET "/get" [] (-> get-patients middleware/wrap-json-response))
+  (POST "/get/patient" [] (-> get-patient middleware/wrap-json-body middleware/wrap-json-response))
   (POST "/delete" [] (-> delete-patient middleware/wrap-json-body middleware/wrap-json-response))
   (POST "/update" [] (-> update-patient-data middleware/wrap-json-body middleware/wrap-json-response)))
 

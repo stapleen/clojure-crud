@@ -11,7 +11,7 @@
   []
   (let [full-name (r/atom "")
         gender (r/atom "")
-        date_of_birth (r/atom "")]
+        date-of-birth (r/atom "")]
 
     (r/create-class
      {:display-name  "patient-add"
@@ -22,13 +22,13 @@
          [:h1 "Добавление пациента"]
          [input/component "text" "full-name " @full-name #(reset! full-name (-> % .-target .-value))]
          [select/component "gender " #(reset! gender (-> % .-target .-value))]
-         [input/component "date" "date_of_birth " @date_of_birth #(reset! date_of_birth (-> % .-target .-value))]
+         [input/component "date" "date_of_birth " @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
 
          [:div
           [:input {:type "button"
                    :value "Добавить"
                    :on-click (fn []
-                               (go (let [response (<! (http/post "http://localhost:3000/add"  {:json-params {:full_name @full-name :gender @gender :date_of_birth @date_of_birth}}))
+                               (go (let [response (<! (http/post "http://localhost:3000/add"  {:json-params {:full-name @full-name :gender @gender :date-of-birth @date-of-birth}}))
                                          success (get-in response [:body :success])
                                          result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
                                      (println "response" result))))}]

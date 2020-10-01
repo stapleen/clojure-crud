@@ -1,9 +1,9 @@
 (ns frontend.select)
 
 (defn component
-  [label func]
+  [label value func]
   [:div
    [:span (str label)]
    [:select {:on-change func}
-    [:option {:value "М"} "М"]
-    [:option {:value "Ж"} "Ж"]]])
+    [:option {:value "М" :selected (= value "М")} "М"]
+    [:option {:value "Ж" :selected (= value "Ж")} "Ж"]]])

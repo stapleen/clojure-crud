@@ -12,14 +12,6 @@
 
 (def app-state (reagent/atom {}))
 
-; (defn hook-browser-navigation! []
-;   (doto (Html5History.)
-;     (events/listen
-;      EventType/NAVIGATE
-;      (fn [event]
-;        (secretary/dispatch! (.-token event))))
-;     (.setEnabled true)))
-
 (defn app-routes []
   (secretary/set-config! :prefix "")
 
@@ -55,8 +47,7 @@
   [new])
 
 (defmethod current-page :edit []
-  (println "1" (get-in @app-state [:id]))
-  [edit "test"])
+  [edit (int (get-in @app-state [:id]))])
 
 (defn init! []
   (app-routes)
