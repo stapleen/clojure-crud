@@ -8,7 +8,8 @@
 
 (defn component
   []
-  (let [patients (r/atom nil)]
+  (let [patients (r/atom nil)
+        loading (r/atom true)]
 
     (r/create-class
      {:display-name  "patients"
@@ -17,7 +18,8 @@
       (fn [this]
         (go (let [response (<! (http/get "http://localhost:3000/get"))
                   result (get-in response [:body :result])]
-              (reset! patients result))))
+              (reset! patients result)
+              (reset! loading false))))
 
       :reagent-render
       (fn []
@@ -42,26 +44,25 @@
                                        (go (let [response (<! (http/post "http://localhost:3000/delete"
                                                                          {:json-params {:id id}}))
                                                  success (get-in response [:body :success])]
-                                             (if (zero? success) 
-                                             (println (get-in response [:body :error])) 
-                                             (reset! patients
-                                                     (filterv
-                                                      (fn [x] (not= (get-in x [:id]) id)) @patients))))))}]]])
+                                             (if (zero? success)
+                                               (println (get-in response [:body :error]))
+                                               (reset! patients
+                                                       (filterv
+                                                        (fn [x] (not= (get-in x [:id]) id)) @patients))))))}]]])
                    @patients)]
-
-
-
-          (if (empty? patients-list)
-            [:p "Список пациентов пуст"]
-            [:div
-             [:input {:type "button"
-                      :value "Добавить пациента"
-                      :on-click (fn [] (set! (.. js/document -location -href) "#/new"))}]
-             [:table
-              [:tr
-               [:th "Полное имя"]
-               [:th "Пол"]
-               [:th "Дата рождения"]
-               [:th ""]
-               [:th ""]]
-              patients-list]])))})))
+          
+          (if (true? @loading) [:p "Загрузка"]
+              (if (empty? patients-list)
+                [:p "Список пациентов пуст"]
+                [:div
+                 [:input {:type "button"
+                          :value "Добавить пациента"
+                          :on-click (fn [] (set! (.. js/document -location -href) "#/new"))}]
+                 [:table
+                  [:tr
+                   [:th "Полное имя"]
+                   [:th "Пол"]
+                   [:th "Дата рождения"]
+                   [:th ""]
+                   [:th ""]]
+                  patients-list]]))))})))
