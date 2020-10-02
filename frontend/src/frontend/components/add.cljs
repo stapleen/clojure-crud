@@ -10,7 +10,7 @@
 (defn component
   []
   (let [full-name (r/atom "")
-        gender (r/atom "")
+        gender (r/atom "М")
         date-of-birth (r/atom "")]
 
     (r/create-class
@@ -18,11 +18,12 @@
 
       :reagent-render
       (fn []
+      (println "gender" @gender)
         [:div
          [:h1 "Добавление пациента"]
-         [input/component "text" "full-name " @full-name #(reset! full-name (-> % .-target .-value))]
-         [select/component "gender " #(reset! gender (-> % .-target .-value))]
-         [input/component "date" "date_of_birth " @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
+         [input/component "text" "ФИО " @full-name #(reset! full-name (-> % .-target .-value))]
+         [select/component "Пол " @gender #(reset! gender (-> % .-target .-value))]
+         [input/component "date" "Дата рождения " @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
 
          [:div
           [:input {:type "button"
@@ -31,5 +32,7 @@
                                (go (let [response (<! (http/post "http://localhost:3000/add"  {:json-params {:full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
                                          success (get-in response [:body :success])
                                          result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
-                                     (println "response" result))))}]
+                                     (js/alert result)))
+                               (set! (.. js/document -location -href) "#/"))
+}]
           [:input {:type "button" :value "Отмена" :on-click (fn [] (set! (.. js/document -location -href) "#/"))}]]])})))

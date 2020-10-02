@@ -44,7 +44,7 @@
                                                                          {:json-params {:id id}}))
                                                  success (get-in response [:body :success])]
                                              (if (zero? success)
-                                               (println (get-in response [:body :error]))
+                                               (js/alert (get-in response [:body :error]))
                                                (reset! patients
                                                        (filterv
                                                         (fn [x] (not= (get-in x [:id]) id)) @patients))))))}]]])
