@@ -32,3 +32,15 @@ a {
 a:hover {
   text-decoration: underline;
 }
+
+.div-input {  
+  display: flex;
+}
+
+
+.input {
+  /* padding-top: 4px;
+  margin-left: 10px; */
+  max-width: 350px;
+  width: 100%;
+}

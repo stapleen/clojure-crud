@@ -34,11 +34,11 @@
     (fn [id]
 
       [:div
-       [:h1 "Редактирование"]
+       [:p "Редактирование"]
 
-       [input/component "text" "ФИО " @full-name #(reset! full-name (-> % .-target .-value))]
-       [select/component "Пол "  @gender #(reset! gender (-> % .-target .-value))]
-       [input/component "date" "Дата рождения " @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
+       [input/component "text" "ФИО" @full-name #(reset! full-name (-> % .-target .-value))]
+       [select/component "Пол"  @gender #(reset! gender (-> % .-target .-value))]
+       [input/component "date" "Дата рождения" @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
 
        [:div
         [:input {:type "button"

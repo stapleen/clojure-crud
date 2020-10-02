@@ -2,7 +2,6 @@
 
 (defn component
   [label value func]
-  (println "value" value)
   [:div
    [:span (str label)]
    [:select {:on-change func}

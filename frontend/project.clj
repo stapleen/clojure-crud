@@ -8,7 +8,8 @@
                  [org.clojure/clojurescript "1.10.773"]
                  [reagent "0.10.0"]
                  [cljs-http "0.1.46"]
-                 [clj-commons/secretary "1.2.4"]]
+                 [clj-commons/secretary "1.2.4"]
+                 [arttuka/reagent-material-ui "4.11.0-3"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.20"]]

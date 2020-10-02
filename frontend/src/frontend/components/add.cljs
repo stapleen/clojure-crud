@@ -18,7 +18,6 @@
 
       :reagent-render
       (fn []
-      (println "gender" @gender)
         [:div
          [:h1 "Добавление пациента"]
          [input/component "text" "ФИО " @full-name #(reset! full-name (-> % .-target .-value))]

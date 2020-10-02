@@ -2,6 +2,8 @@
 
 (defn component
   [type label value func]
-  [:div
+  [:div {:class "div-input"}
    [:span (str label)]
-   [:input {:type type :value value :on-change func }]])
+   [:div
+    [:input {:type type :value value :on-change func :class "input"}]]
+   ])

@@ -3,7 +3,14 @@
   (:require
    [reagent.core :as r]
    [cljs-http.client :as http]
-   [cljs.core.async :refer [<!]]))
+   [cljs.core.async :refer [<!]]
+   [reagent-material-ui.core.table :refer [table]]
+   [reagent-material-ui.core.table-body :refer [table-body]]
+   [reagent-material-ui.core.table-cell :refer [table-cell]]
+   [reagent-material-ui.core.table-container :refer [table-container]]
+   [reagent-material-ui.core.table-head :refer [table-head]]
+   [reagent-material-ui.core.table-row :refer [table-row]]
+   ))
 
 (defn component
   []
@@ -21,6 +28,19 @@
               (reset! loading false))))
 
       :reagent-render
+      ;; (fn [] 
+
+      ;; [:table-container
+      ;;  [:table
+      ;;   [:table-head
+      ;;    [:table-cell {:value "Имя"}]]]]
+
+      ;; )
+
+
+
+
+
       (fn []
         (let [patients-list
               (map #(let [id (get-in % [:id])
@@ -49,7 +69,7 @@
                                                        (filterv
                                                         (fn [x] (not= (get-in x [:id]) id)) @patients))))))}]]])
                    @patients)]
-          
+
           (if (true? @loading) [:p "Загрузка"]
               (if (empty? patients-list)
                 [:div
