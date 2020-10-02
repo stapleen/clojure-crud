@@ -28,14 +28,14 @@
                                   :created_at current-date-convert-date})
       (response {:success 1 :result "Успешно"}))
 
-    (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
+    (catch Exception e (response {:success 0 :error "Ошибка"}))))
    
 (defn get-patients [request]
 (try
   (let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth FROM patients WHERE deleted=false"])]
     (response {:success 1 :result patients-list}))
     
-  (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
+  (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defn get-patient [request]
   (try
@@ -46,7 +46,7 @@
       (response {:success 1 :result patient}))
 
     (catch Exception e (response
-                        {:success 0 :error "Произошла ошибка"}))))
+                        {:success 0 :error "Ошибка"}))))
 
 (defn delete-patient [request]
  (try
@@ -60,7 +60,7 @@
       (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
       (response {:success 1 :result "Успешно"})))
 
-   (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
+   (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defn update-patient-data
   [request]
@@ -84,7 +84,7 @@
         (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
         (response {:success 1 :result "Успешно"})))
 
-    (catch Exception e (response {:success 0 :error "Произошла ошибка"}))))
+    (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
