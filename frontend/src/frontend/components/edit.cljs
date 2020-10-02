@@ -41,7 +41,8 @@
        [input/component "date" "Дата рождения" @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
 
        [:div
-        [:input {:type "button"
+        [:input {:class "button"
+                 :type "button"
                  :value "Сохранить"
                  :on-click (fn []
                              (go (let [response (<! (http/post "http://localhost:3000/update"  {:json-params {:id id :full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
@@ -49,4 +50,4 @@
                                        result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
                                    (js/alert result)))
                              (set! (.. js/document -location -href) "#/"))}]
-        [:input {:type "button" :value "Отмена" :on-click (fn [] (set! (.. js/document -location -href) "#/"))}]]])})))
+        [:input {:class "button" :type "button" :value "Отмена" :on-click (fn [] (set! (.. js/document -location -href) "#/"))}]]])})))
