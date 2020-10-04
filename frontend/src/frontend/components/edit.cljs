@@ -4,6 +4,7 @@
    [reagent.core :as r]
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
+   [reagent-material-ui.core.circular-progress :refer [circular-progress]]
    [frontend.components.input :as input]
    [frontend.components.select :as select]))
 
@@ -33,7 +34,7 @@
 
     :reagent-render
     (fn [id]
-      (if (true? @loading) [:p "Загрузка"]
+      (if (true? @loading) [circular-progress {:color "secondary"}]
           (if (nil? @full-name)
             [:p "Пациент не найден"]
             [:div

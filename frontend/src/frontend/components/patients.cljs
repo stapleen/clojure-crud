@@ -5,7 +5,7 @@
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
    [moment :as moment]
-  ;;  [reagent-material-ui.core.table :refer [table]]
+   [reagent-material-ui.core.circular-progress :refer [circular-progress]]
   ;;  [reagent-material-ui.core.table-body :refer [table-body]]
   ;;  [reagent-material-ui.core.table-cell :refer [table-cell]]
   ;;  [reagent-material-ui.core.table-container :refer [table-container]]
@@ -70,7 +70,7 @@
                                                         (fn [x] (not= (get-in x [:id]) id)) @patients))))))}]]])
                    @patients)]
 
-          (if (true? @loading) [:p "Загрузка"]
+          (if (true? @loading) [circular-progress {:color "secondary"}]
               (if (empty? patients-list)
                 [:div
                  [:input {:type "button"
@@ -88,4 +88,5 @@
                    [:th "Дата рождения"]
                    [:th ""]
                    [:th ""]]
-                  patients-list]]))))})))
+                  patients-list]]))
+                  ))})))
