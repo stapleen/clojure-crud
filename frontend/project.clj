@@ -9,7 +9,8 @@
                  [reagent "0.10.0"]
                  [cljs-http "0.1.46"]
                  [clj-commons/secretary "1.2.4"]
-                 [arttuka/reagent-material-ui "4.11.0-3"]]
+                 [arttuka/reagent-material-ui "4.11.0-3"]
+                 [cljsjs/moment "2.24.0-0"]]
 
   :plugins [[lein-cljsbuild "1.1.7"]
             [lein-figwheel "0.5.20"]]

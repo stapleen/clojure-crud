@@ -4,12 +4,13 @@
    [reagent.core :as r]
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
-   [reagent-material-ui.core.table :refer [table]]
-   [reagent-material-ui.core.table-body :refer [table-body]]
-   [reagent-material-ui.core.table-cell :refer [table-cell]]
-   [reagent-material-ui.core.table-container :refer [table-container]]
-   [reagent-material-ui.core.table-head :refer [table-head]]
-   [reagent-material-ui.core.table-row :refer [table-row]]
+   [moment :as moment]
+  ;;  [reagent-material-ui.core.table :refer [table]]
+  ;;  [reagent-material-ui.core.table-body :refer [table-body]]
+  ;;  [reagent-material-ui.core.table-cell :refer [table-cell]]
+  ;;  [reagent-material-ui.core.table-container :refer [table-container]]
+  ;;  [reagent-material-ui.core.table-head :refer [table-head]]
+  ;;  [reagent-material-ui.core.table-row :refer [table-row]]
    ))
 
 (defn component
@@ -28,30 +29,29 @@
               (reset! loading false))))
 
       :reagent-render
-      ;; (fn [] 
-
-      ;; [:table-container
-      ;;  [:table
-      ;;   [:table-head
-      ;;    [:table-cell {:value "Имя"}]]]]
-
-      ;; )
+      ;; (fn []
 
 
 
 
+
+      ;;   [:table-container
+      ;;    [:table
+      ;;     [:table-head
+      ;;      [:table-cell {:value "Имя"}]]]])
 
       (fn []
         (let [patients-list
               (map #(let [id (get-in % [:id])
                           full-name (get-in % [:full_name])
                           gender (get-in % [:gender])
-                          date_of_birth (get-in % [:date_of_birth])]
+                          date_of_birth (get-in % [:date_of_birth])
+                          date-formated (.format  (moment. date_of_birth) "DD.MM.YYYY")]
 
                       [:tr {:key id}
                        [:td full-name]
                        [:td gender]
-                       [:td date_of_birth]
+                       [:td date-formated]
                        [:td [:input {:type "button"
                                      :value "Редактировать"
                                      :on-click (fn []
