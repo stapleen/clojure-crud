@@ -6,6 +6,7 @@
    [cljs.core.async :refer [<!]]
    [moment :as moment]
    [reagent-material-ui.core.circular-progress :refer [circular-progress]]
+   [frontend.config :as config]
   ;;  [reagent-material-ui.core.table-body :refer [table-body]]
   ;;  [reagent-material-ui.core.table-cell :refer [table-cell]]
   ;;  [reagent-material-ui.core.table-container :refer [table-container]]
@@ -23,7 +24,7 @@
 
       :component-did-mount
       (fn [this]
-        (go (let [response (<! (http/get "http://localhost:3000/get"))
+        (go (let [response (<! (http/get (str config/url "/get")))
                   result (get-in response [:body :result])]
               (reset! patients result)
               (reset! loading false))))
@@ -60,7 +61,7 @@
                                      :value "Удалить"
                                      :on-click
                                      (fn []
-                                       (go (let [response (<! (http/post "http://localhost:3000/delete"
+                                       (go (let [response (<! (http/post (str config/url "/delete")
                                                                          {:json-params {:id id}}))
                                                  success (get-in response [:body :success])]
                                              (if (zero? success)

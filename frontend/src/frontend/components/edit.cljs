@@ -5,6 +5,7 @@
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
    [reagent-material-ui.core.circular-progress :refer [circular-progress]]
+   [frontend.config :as config]
    [frontend.components.input :as input]
    [frontend.components.select :as select]))
 
@@ -20,7 +21,7 @@
 
     :component-did-mount
     (fn [this]
-      (go (let [response (<! (http/post "http://localhost:3000/get/patient" {:json-params {:id id}}))
+      (go (let [response (<! (http/post (str config/url "/get/patient") {:json-params {:id id}}))
                 result (get-in response [:body :result])
                 patient (first result)
                 patient-name (get-in patient [:full_name])
@@ -49,7 +50,7 @@
                        :type "button"
                        :value "Сохранить"
                        :on-click (fn []
-                                   (go (let [response (<! (http/post "http://localhost:3000/update"  {:json-params {:id id :full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
+                                   (go (let [response (<! (http/post (str config/url "/update")  {:json-params {:id id :full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
                                              success (get-in response [:body :success])
                                              result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
                                          (js/alert result)))
