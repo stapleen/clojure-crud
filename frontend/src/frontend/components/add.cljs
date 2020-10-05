@@ -27,7 +27,7 @@
           [:p "Добавление пациента"]
           [input/component "outlined" @full-name "ФИО" #(reset! full-name (-> % .-target .-value)) false]
           [select/component @gender #(reset! gender (-> % .-target .-value)) "Пол"]
-          [picker/component "outlined" @date-of-birth "Дата рожедния" #(reset! date-of-birth (-> % .-target .-value))]
+          [picker/component "outlined" @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
           [:div {:class "buttons"}
            [button/component
             "outlined"

@@ -14,12 +14,16 @@
    [reagent-material-ui.core.table-head :refer [table-head]]
    [reagent-material-ui.core.table-row :refer [table-row]]
    [reagent-material-ui.core.paper :refer [paper]]
-   [frontend.components.button :as button]))
+   [frontend.components.button :as button]
+   [frontend.components.snackbar :as snackbar]))
 
 (defn component
   []
   (let [patients (r/atom nil)
-        loading? (r/atom true)]
+        severity (r/atom nil)
+        message (r/atom nil)
+        loading? (r/atom true)
+        open? (r/atom false)]
 
     (r/create-class
      {:display-name  "patients"
@@ -45,6 +49,7 @@
                        [table-cell date-formated]
                        [table-cell
                         [:div
+                         [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
                          [button/component
                           "outlined"
                           (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))
@@ -56,10 +61,15 @@
                                                               {:json-params {:id id}}))
                                       success (get-in response [:body :success])]
                                   (if (zero? success)
-                                    (js/alert (get-in response [:body :error]))
-                                    (reset! patients
-                                            (filterv
-                                             (fn [x] (not= (get-in x [:id]) id)) @patients))))))
+                                    (do ((reset! severity "error")
+                                         (reset! open? true)
+                                         (reset! message (get-in response [:body :error]))))
+                                    (do ((reset! severity "success")
+                                         (reset! message (get-in response [:body :result]))
+                                         (reset! patients
+                                                 (filterv
+                                                  (fn [x] (not= (get-in x [:id]) id)) @patients))
+                                         (reset! open? true)))))))
                           "Удалить"]]]])
                    @patients)]
 
