@@ -7,7 +7,8 @@
    [frontend.config :as config]
    [frontend.components.input :as input]
    [frontend.components.select :as select]
-   [frontend.components.button :as button]))
+   [frontend.components.button :as button]
+   [frontend.components.picker :as picker]))
 
 (defn component
   []
@@ -22,10 +23,9 @@
       (fn []
         [:div
          [:p "Добавление пациента"]
-         [input/component "text" "ФИО " @full-name #(reset! full-name (-> % .-target .-value))]
-         [select/component "Пол " @gender #(reset! gender (-> % .-target .-value))]
-         [input/component "date" "Дата рождения " @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
-
+          [input/component "outlined" @full-name "ФИО" #(reset! full-name (-> % .-target .-value)) false]
+          [select/component @gender #(reset! gender (-> % .-target .-value)) "Пол"]
+          [picker/component "outlined" @date-of-birth "Дата рожедния" #(reset! date-of-birth (-> % .-target .-value))]
          [:div
           [button/component
            "outlined"

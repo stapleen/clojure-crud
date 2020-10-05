@@ -1,12 +1,12 @@
-(ns frontend.components.input
+(ns frontend.components.picker
   (:require
    [reagent-material-ui.core.text-field :refer [text-field]]))
 
 (defn component
-  [variant value label func]
+  [variant value func]
   [:div
    [text-field
     {:variant variant
      :value value
-     :label label
+     :type "date"
      :on-change func}]])

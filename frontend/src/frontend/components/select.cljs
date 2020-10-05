@@ -1,9 +1,19 @@
-(ns frontend.components.select)
+(ns frontend.components.select
+  (:require
+   [reagent-material-ui.core.text-field :refer [text-field]]
+   [reagent-material-ui.core.menu-item :refer [menu-item]]))
 
 (defn component
-  [label value func]
+  [value func label]
   [:div
-   [:div (str label)]
-   [:select {:on-change func :class "select"}
-    [:option {:value "М" :selected (= value "М")} "М"]
-    [:option {:value "Ж" :selected (= value "Ж")} "Ж"]]])
+   [text-field
+    {:value value
+     :label label
+     :on-change func
+     :select true}
+    [menu-item
+     {:value "М"}
+     "М"]
+    [menu-item
+     {:value "Ж"}
+     "Ж"]]])
