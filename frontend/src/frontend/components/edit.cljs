@@ -13,6 +13,9 @@
    [reagent-material-ui.core.paper :refer [paper]]
    [frontend.components.snackbar :as snackbar]))
 
+(defn go-home []
+  (set! (.. js/document -location -href) "#/"))
+
 (defn component
   [id]
   (let [full-name (r/atom nil)
@@ -62,13 +65,9 @@
                           (do ((reset! severity "error")
                                (reset! open? true)
                                (reset! message (get-in response [:body :error]))))
-                          (do ((reset! severity "success")
-                               (reset! message (get-in response [:body :result]))
-                               (reset! open? true))))))
-                  ;; (set! (.. js/document -location -href) "#/")
-                  )
+                          (go-home)))))
                 "Сохранить"]
                [button/component
                 "outlined"
-                (fn [] (set! (.. js/document -location -href) "#/"))
+                (fn [] (go-home))
                 "Отмена"]]]])))})))

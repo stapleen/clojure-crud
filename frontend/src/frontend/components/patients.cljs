@@ -53,10 +53,6 @@
                        [table-cell
                         [:div {:class "tableButtons"}
                          [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
-
-
-
-
                          [icon-btn/component [edit]
                           (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))]
 

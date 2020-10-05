@@ -12,6 +12,9 @@
    [reagent-material-ui.core.paper :refer [paper]]
    [frontend.components.snackbar :as snackbar]))
 
+(defn go-home []
+  (set! (.. js/document -location -href) "#/"))
+
 (defn component
   []
   (let [full-name (r/atom "")
@@ -37,19 +40,19 @@
            [button/component
             "outlined"
             (fn []
-              (go (let [response (<! (http/post (str config/url "/add")  {:json-params {:full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
+              (go (let [response (<! (http/post (str config/url "/add")
+                                                {:json-params
+                                                 {:full_name @full-name
+                                                  :gender @gender
+                                                  :date_of_birth @date-of-birth}}))
                         success (get-in response [:body :success])]
                     (if (zero? success)
                       (do ((reset! severity "error")
                            (reset! open? true)
                            (reset! message (get-in response [:body :error]))))
-                      (do ((reset! severity "success")
-                           (reset! message (get-in response [:body :result]))
-                           (reset! open? true))))))
-              ;; (set! (.. js/document -location -href) "#/")
-              )
+                      (go-home)))))
             "Добавить"]
            [button/component
             "outlined"
-            (fn [] (set! (.. js/document -location -href) "#/"))
+            (fn [] (go-home))
             "Отмена"]]]])})))
