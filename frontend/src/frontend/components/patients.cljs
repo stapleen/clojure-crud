@@ -54,7 +54,7 @@
                         [:div {:class "tableButtons"}
                          [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
 
-                         
+
 
 
                          [icon-btn/component [edit]
@@ -74,31 +74,7 @@
                                          (reset! patients
                                                  (filterv
                                                   (fn [x] (not= (get-in x [:id]) id)) @patients))
-                                         (reset! open? true)))))))]
-
-
-                        ;;  [button/component
-                        ;;   "outlined"
-                        ;;   (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))
-                        ;;   "Редактировать"]
-                        ;;  [button/component
-                        ;;   "outlined"
-                        ;;   (fn []
-                        ;;     (go (let [response (<! (http/post (str config/url "/delete")
-                        ;;                                       {:json-params {:id id}}))
-                        ;;               success (get-in response [:body :success])]
-                        ;;           (if (zero? success)
-                        ;;             (do ((reset! severity "error")
-                        ;;                  (reset! open? true)
-                        ;;                  (reset! message (get-in response [:body :error]))))
-                        ;;             (do ((reset! severity "success")
-                        ;;                  (reset! message (get-in response [:body :result]))
-                        ;;                  (reset! patients
-                        ;;                          (filterv
-                        ;;                           (fn [x] (not= (get-in x [:id]) id)) @patients))
-                        ;;                  (reset! open? true)))))))
-                        ;;   "Удалить"]
-                         ]]])
+                                         (reset! open? true)))))))]]]])
                    @patients)]
 
           (if (true? @loading?) [circular-progress {:color "secondary"}]
