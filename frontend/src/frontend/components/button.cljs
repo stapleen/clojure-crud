@@ -5,6 +5,7 @@
 (defn component
   [variant func label]
   [button
-   {:variant variant
+   {:class "button"
+    :variant variant
     :on-click func}
    label])

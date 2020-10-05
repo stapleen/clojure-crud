@@ -14,11 +14,11 @@
    [reagent-material-ui.core.table-head :refer [table-head]]
    [reagent-material-ui.core.table-row :refer [table-row]]
    [reagent-material-ui.core.paper :refer [paper]]
-   [frontend.components.button :as button]
    [frontend.components.snackbar :as snackbar]
    [frontend.components.icon-btn :as icon-btn]
    [reagent-material-ui.icons.delete-forever :refer [delete-forever]]
-   [reagent-material-ui.icons.edit :refer [edit]]))
+   [reagent-material-ui.icons.edit :refer [edit]]
+   [reagent-material-ui.icons.add :refer [add]]))
 
 (defn component
   []
@@ -55,7 +55,6 @@
                          [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
                          [icon-btn/component [edit]
                           (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))]
-
                          [icon-btn/component [delete-forever]
                           (fn []
                             (go (let [response (<! (http/post (str config/url "/delete")
@@ -72,20 +71,15 @@
                                                   (fn [x] (not= (get-in x [:id]) id)) @patients))
                                          (reset! open? true)))))))]]]])
                    @patients)]
-
           (if (true? @loading?) [circular-progress {:color "secondary"}]
               (if (empty? patients-list)
                 [:div
-                 [button/component
-                  "outlined"
-                  (fn [] (set! (.. js/document -location -href) "#/new"))
-                  "Добавить пациента"]
+                 [icon-btn/component [add]
+                  (fn [] (set! (.. js/document -location -href) "#/new"))]
                  [:p "Список пациентов пуст"]]
                 [paper
-                 [button/component
-                  "outlined"
-                  (fn [] (set! (.. js/document -location -href) "#/new"))
-                  "Добавить пациента"]
+                 [icon-btn/component [add]
+                  (fn [] (set! (.. js/document -location -href) "#/new"))]
                  [table-container
                   [table
                    [table-head

@@ -49,10 +49,15 @@ a:hover {
 }
 
 .buttons {
+  display: flex;
   width: 46%;
   margin-bottom: 25px;
 }
 
 .tableButtons {
   display: flex;
+}
+
+.button {
+  width: 100%;
 }
