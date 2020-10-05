@@ -6,7 +6,8 @@
    [cljs.core.async :refer [<!]]
    [frontend.config :as config]
    [frontend.components.input :as input]
-   [frontend.components.select :as select]))
+   [frontend.components.select :as select]
+   [frontend.components.button :as button]))
 
 (defn component
   []
@@ -26,13 +27,16 @@
          [input/component "date" "Дата рождения " @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
 
          [:div
-          [:input {:class "button"
-                   :type "button"
-                   :value "Добавить"
-                   :on-click (fn []
-                               (go (let [response (<! (http/post(str config/url "/add")  {:json-params {:full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
-                                         success (get-in response [:body :success])
-                                         result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
-                                     (js/alert result)))
-                               (set! (.. js/document -location -href) "#/"))}]
-          [:input {:class "button" :type "button" :value "Отмена" :on-click (fn [] (set! (.. js/document -location -href) "#/"))}]]])})))
+          [button/component
+           "outlined"
+           (fn []
+             (go (let [response (<! (http/post (str config/url "/add")  {:json-params {:full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
+                       success (get-in response [:body :success])
+                       result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
+                   (js/alert result)))
+             (set! (.. js/document -location -href) "#/"))
+           "Добавить"]
+          [button/component
+           "outlined"
+           (fn [] (set! (.. js/document -location -href) "#/"))
+           "Отмена"]]])})))

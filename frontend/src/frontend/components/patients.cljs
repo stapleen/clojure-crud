@@ -13,8 +13,8 @@
    [reagent-material-ui.core.table-container :refer [table-container]]
    [reagent-material-ui.core.table-head :refer [table-head]]
    [reagent-material-ui.core.table-row :refer [table-row]]
-   [reagent-material-ui.styles :as styles]
-   [reagent-material-ui.core.paper :refer [paper]]))
+   [reagent-material-ui.core.paper :refer [paper]]
+   [frontend.components.button :as button]))
 
 (defn component
   []
@@ -45,35 +45,37 @@
                        [table-cell date-formated]
                        [table-cell
                         [:div
-                         [:input {:type "button"
-                                  :value "Редактировать"
-                                  :on-click (fn []
-                                              (set! (.. js/document -location -href) (str "#/edit/" id)))}]]
-                        [:input {:type "button"
-                                 :value "Удалить"
-                                 :on-click
-                                 (fn []
-                                   (go (let [response (<! (http/post (str config/url "/delete")
-                                                                     {:json-params {:id id}}))
-                                             success (get-in response [:body :success])]
-                                         (if (zero? success)
-                                           (js/alert (get-in response [:body :error]))
-                                           (reset! patients
-                                                   (filterv
-                                                    (fn [x] (not= (get-in x [:id]) id)) @patients))))))}]]])
+                         [button/component
+                          "outlined"
+                          (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))
+                          "Редактировать"]
+                         [button/component
+                          "outlined"
+                          (fn []
+                            (go (let [response (<! (http/post (str config/url "/delete")
+                                                              {:json-params {:id id}}))
+                                      success (get-in response [:body :success])]
+                                  (if (zero? success)
+                                    (js/alert (get-in response [:body :error]))
+                                    (reset! patients
+                                            (filterv
+                                             (fn [x] (not= (get-in x [:id]) id)) @patients))))))
+                          "Удалить"]]]])
                    @patients)]
 
           (if (true? @loading?) [circular-progress {:color "secondary"}]
               (if (empty? patients-list)
                 [:div
-                 [:input {:type "button"
-                          :value "Добавить пациента"
-                          :on-click (fn [] (set! (.. js/document -location -href) "#/new"))}]
+                 [button/component
+                  "outlined"
+                  (fn [] (set! (.. js/document -location -href) "#/new"))
+                  "Добавить пациента"]
                  [:p "Список пациентов пуст"]]
                 [paper
-                 [:input {:type "button"
-                          :value "Добавить пациента"
-                          :on-click (fn [] (set! (.. js/document -location -href) "#/new"))}]
+                 [button/component
+                  "outlined"
+                  (fn [] (set! (.. js/document -location -href) "#/new"))
+                  "Добавить пациента"]
                  [table-container
                   [table
                    [table-head
