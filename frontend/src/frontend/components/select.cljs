@@ -5,7 +5,7 @@
 
 (defn component
   [value func label]
-  [:div
+  [:div {:class "input"}
    [text-field
     {:value value
      :label label

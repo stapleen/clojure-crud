@@ -9,7 +9,8 @@
    [frontend.components.input :as input]
    [frontend.components.select :as select]
    [frontend.components.button :as button]
-   [frontend.components.picker :as picker]))
+   [frontend.components.picker :as picker]
+   [reagent-material-ui.core.paper :refer [paper]]))
 
 (defn component
   [id]
@@ -40,22 +41,23 @@
       (if (true? @loading?) [circular-progress {:color "secondary"}]
           (if (nil? @full-name)
             [:p "Пациент не найден"]
-            [:div
-             [:p "Редактирование"]
-             [input/component "outlined" @full-name "ФИО" #(reset! full-name (-> % .-target .-value)) false]
-             [select/component @gender #(reset! gender (-> % .-target .-value)) "Пол"]
-             [picker/component "outlined" @date-of-birth "Дата рожедния" #(reset! date-of-birth (-> % .-target .-value))]
-             [:div
-              [button/component
-               "outlined"
-               (fn []
-                 (go (let [response (<! (http/post (str config/url "/update")  {:json-params {:id id :full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
-                           success (get-in response [:body :success])
-                           result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
-                       (js/alert result)))
-                 (set! (.. js/document -location -href) "#/"))
-               "Сохранить"]
-              [button/component
-               "outlined"
-               (fn [] (set! (.. js/document -location -href) "#/"))
-               "Отмена"]]])))})))
+            [paper
+             [:div {:class "form"}
+              [:p "Редактирование"]
+              [input/component "outlined" @full-name "ФИО" #(reset! full-name (-> % .-target .-value)) false]
+              [select/component @gender #(reset! gender (-> % .-target .-value)) "Пол"]
+              [picker/component "outlined" @date-of-birth "Дата рожедния" #(reset! date-of-birth (-> % .-target .-value))]
+              [:div {:class "buttons"}
+               [button/component
+                "outlined"
+                (fn []
+                  (go (let [response (<! (http/post (str config/url "/update")  {:json-params {:id id :full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
+                            success (get-in response [:body :success])
+                            result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
+                        (js/alert result)))
+                  (set! (.. js/document -location -href) "#/"))
+                "Сохранить"]
+               [button/component
+                "outlined"
+                (fn [] (set! (.. js/document -location -href) "#/"))
+                "Отмена"]]]])))})))

@@ -4,7 +4,7 @@
 
 (defn component
   [variant value func]
-  [:div
+  [:div {:class "input"}
    [text-field
     {:variant variant
      :value value
