@@ -5,7 +5,7 @@
 (defn component
   [open func severity message]
   [snackbar {:open open
-             :autoHideDuration 6000
+             :autoHideDuration 500
              :on-close func
              :anchor-origin {:vertical "top"
                              :horizontal "center"}}

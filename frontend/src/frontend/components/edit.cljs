@@ -10,14 +10,18 @@
    [frontend.components.select :as select]
    [frontend.components.button :as button]
    [frontend.components.picker :as picker]
-   [reagent-material-ui.core.paper :refer [paper]]))
+   [reagent-material-ui.core.paper :refer [paper]]
+   [frontend.components.snackbar :as snackbar]))
 
 (defn component
   [id]
   (let [full-name (r/atom nil)
         gender (r/atom nil)
         date-of-birth (r/atom nil)
-        loading? (r/atom true)]
+        loading? (r/atom true)
+        severity (r/atom nil)
+        message (r/atom nil)
+        open? (r/atom false)]
 
   (r/create-class
    {:display-name  "patient-edit"
@@ -43,6 +47,7 @@
             [:p "Пациент не найден"]
             [paper
              [:div {:class "form"}
+              [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
               [:p "Редактирование"]
               [input/component "outlined" @full-name "ФИО" #(reset! full-name (-> % .-target .-value)) false]
               [select/component @gender #(reset! gender (-> % .-target .-value)) "Пол"]
@@ -52,10 +57,16 @@
                 "outlined"
                 (fn []
                   (go (let [response (<! (http/post (str config/url "/update")  {:json-params {:id id :full_name @full-name :gender @gender :date_of_birth @date-of-birth}}))
-                            success (get-in response [:body :success])
-                            result (if (zero? success) (get-in response [:body :error]) (get-in response [:body :result]))]
-                        (js/alert result)))
-                  (set! (.. js/document -location -href) "#/"))
+                            success (get-in response [:body :success])]
+                        (if (zero? success)
+                          (do ((reset! severity "error")
+                               (reset! open? true)
+                               (reset! message (get-in response [:body :error]))))
+                          (do ((reset! severity "success")
+                               (reset! message (get-in response [:body :result]))
+                               (reset! open? true))))))
+                  ;; (set! (.. js/document -location -href) "#/")
+                  )
                 "Сохранить"]
                [button/component
                 "outlined"
