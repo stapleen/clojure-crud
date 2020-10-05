@@ -15,7 +15,10 @@
    [reagent-material-ui.core.table-row :refer [table-row]]
    [reagent-material-ui.core.paper :refer [paper]]
    [frontend.components.button :as button]
-   [frontend.components.snackbar :as snackbar]))
+   [frontend.components.snackbar :as snackbar]
+   [frontend.components.icon-btn :as icon-btn]
+   [reagent-material-ui.icons.delete-forever :refer [delete-forever]]
+   [reagent-material-ui.icons.edit :refer [edit]]))
 
 (defn component
   []
@@ -48,14 +51,16 @@
                        [table-cell gender]
                        [table-cell date-formated]
                        [table-cell
-                        [:div
+                        [:div {:class "tableButtons"}
                          [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
-                         [button/component
-                          "outlined"
-                          (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))
-                          "Редактировать"]
-                         [button/component
-                          "outlined"
+
+                         
+
+
+                         [icon-btn/component [edit]
+                          (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))]
+
+                         [icon-btn/component [delete-forever]
                           (fn []
                             (go (let [response (<! (http/post (str config/url "/delete")
                                                               {:json-params {:id id}}))
@@ -69,8 +74,31 @@
                                          (reset! patients
                                                  (filterv
                                                   (fn [x] (not= (get-in x [:id]) id)) @patients))
-                                         (reset! open? true)))))))
-                          "Удалить"]]]])
+                                         (reset! open? true)))))))]
+
+
+                        ;;  [button/component
+                        ;;   "outlined"
+                        ;;   (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))
+                        ;;   "Редактировать"]
+                        ;;  [button/component
+                        ;;   "outlined"
+                        ;;   (fn []
+                        ;;     (go (let [response (<! (http/post (str config/url "/delete")
+                        ;;                                       {:json-params {:id id}}))
+                        ;;               success (get-in response [:body :success])]
+                        ;;           (if (zero? success)
+                        ;;             (do ((reset! severity "error")
+                        ;;                  (reset! open? true)
+                        ;;                  (reset! message (get-in response [:body :error]))))
+                        ;;             (do ((reset! severity "success")
+                        ;;                  (reset! message (get-in response [:body :result]))
+                        ;;                  (reset! patients
+                        ;;                          (filterv
+                        ;;                           (fn [x] (not= (get-in x [:id]) id)) @patients))
+                        ;;                  (reset! open? true)))))))
+                        ;;   "Удалить"]
+                         ]]])
                    @patients)]
 
           (if (true? @loading?) [circular-progress {:color "secondary"}]

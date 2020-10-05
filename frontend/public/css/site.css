@@ -52,3 +52,7 @@ a:hover {
   width: 46%;
   margin-bottom: 25px;
 }
+
+.tableButtons {
+  display: flex;
+}
