@@ -20,6 +20,7 @@
 
 (defn add-patients
   [request]
+  (println "request" request)
   (try
     (let [body (get-in request [:body])
           full-name (get-in request [:body "full_name"])
