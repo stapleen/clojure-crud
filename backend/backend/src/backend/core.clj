@@ -10,6 +10,13 @@
             [ring.middleware.cors :refer [wrap-cors]]))
 
 (def db config/db-config)
+(def port config/port)
+
+(defn date-to-time-stamp [date]
+  (-> date java.sql.Timestamp. .toLocalDateTime))
+
+(defn convert-string-to-date [string]
+  (if (nil? string) nil (java.sql.Date/valueOf string)))
 
 (defn add-patients
   [request]
@@ -18,23 +25,21 @@
           full-name (get-in request [:body "full_name"])
           gender (get-in request [:body "gender"])
           date-of-birth (get-in request [:body "date_of_birth"])
-          date-of-birth-convert-date (java.sql.Date/valueOf date-of-birth)
+          date-of-birth-convert-date (convert-string-to-date date-of-birth)
           current-date (.getTime (java.util.Date.))
-          current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)]
-
+          current-date-convert-time-stamp (date-to-time-stamp current-date)]
       (jdbc/insert! db :patients {:full_name full-name
                                   :gender gender
                                   :date_of_birth date-of-birth-convert-date
-                                  :created_at current-date-convert-date})
+                                  :created_at current-date-convert-time-stamp})
       (response {:success 1 :result "Успешно"}))
-
     (catch Exception e (response {:success 0 :error "Ошибка"}))))
    
 (defn get-patients [request]
 (try
-  (let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth FROM patients WHERE deleted=false"])]
+  (let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
+  FROM patients WHERE deleted=false"])]
     (response {:success 1 :result patients-list}))
-    
   (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defn get-patient [request]
@@ -42,9 +47,9 @@
     (let
      [body (get-in request [:body])
       id (get-in request [:body "id"])
-      patient (jdbc/query db ["SELECT id, full_name, gender, date_of_birth FROM patients WHERE id = ? AND deleted=false" id])]
+      patient (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
+      FROM patients WHERE id = ? AND deleted=false" id])]
       (response {:success 1 :result patient}))
-
     (catch Exception e (response
                         {:success 0 :error "Ошибка"}))))
 
@@ -53,13 +58,13 @@
    (let [body (get-in request [:body])
          patient-id (get-in request [:body "id"])
          current-date (.getTime (java.util.Date.))
-         current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)
-         query-result (jdbc/update! db :patients {:deleted true :updated_at current-date-convert-date} ["id = ?" patient-id])]
-
+         current-date-convert-time-stamp (date-to-time-stamp current-date)
+         query-result (jdbc/update! db :patients
+                                    {:deleted true :updated_at current-date-convert-time-stamp}
+                                    ["id = ?" patient-id])]  
      (if (zero? (first query-result))
-      (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
-      (response {:success 1 :result "Успешно"})))
-
+       (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
+       (response {:success 1 :result "Успешно"})))
    (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defn update-patient-data
@@ -70,20 +75,23 @@
           full-name (get-in request [:body "full_name"])
           gender (get-in request [:body "gender"])
           date-of-birth (get-in request [:body "date_of_birth"])
-          date-of-birth-convert-date (if (nil? date-of-birth) nil (java.sql.Date/valueOf date-of-birth))
+          date-of-birth-convert-date (convert-string-to-date date-of-birth)
           current-date (.getTime (java.util.Date.))
-          current-date-convert-date (-> current-date java.sql.Timestamp. .toLocalDateTime)
+          current-date-convert-time-stamp (date-to-time-stamp current-date)
           query-result (jdbc/execute! db
                                       ["UPDATE patients SET full_name = COALESCE(?, full_name),
                    gender = COALESCE(?, gender),
                    date_of_birth = COALESCE(?, date_of_birth),
                    updated_at = ?
-                   WHERE id = ?" full-name gender date-of-birth-convert-date current-date-convert-date id])]
-
+                   WHERE id = ?"
+                                       full-name
+                                       gender
+                                       date-of-birth-convert-date
+                                       current-date-convert-time-stamp
+                                       id])]
       (if (zero? (first query-result))
         (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
         (response {:success 1 :result "Успешно"})))
-
     (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defroutes app
@@ -94,4 +102,8 @@
   (POST "/update" [] (-> update-patient-data middleware/wrap-json-body middleware/wrap-json-response)))
 
 (defn -main []
-  (jetty/run-jetty (-> app (wrap-cors :access-control-allow-origin [#".*"] :access-control-allow-methods [:get :post] :access-control-allow-credentials ["true"])) {:port 3000}))
+  (jetty/run-jetty (-> app (wrap-cors
+                            :access-control-allow-origin [#".*"]
+                            :access-control-allow-methods [:get :post]
+                            :access-control-allow-credentials ["true"]))
+                   {:port port}))
