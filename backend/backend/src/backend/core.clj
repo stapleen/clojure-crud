@@ -27,7 +27,7 @@
           date-of-birth (get-in request [:body "date_of_birth"])
           date-of-birth-convert-date (convert-string-to-date date-of-birth)
           current-date (.getTime (java.util.Date.))
-          current-date-convert-time-stamp (date-to-time-stamp current-date)]
+          current-date-convert-time-stamp (date-to-time-stamp current-date)]     
       (jdbc/insert! db :patients {:full_name full-name
                                   :gender gender
                                   :date_of_birth date-of-birth-convert-date
