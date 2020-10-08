@@ -1,6 +1,6 @@
 (ns backend.config)
 
-(def db-config {:dbtype "type"
+(def db-config {:dbtype "postgresql"
                 :dbname "name"
                 :host "db"
                 :user "user"
