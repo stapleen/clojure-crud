@@ -1,6 +1,6 @@
-CREATE DATABASE clojure_test;
+CREATE DATABASE clojure;
 
- \c clojure_test 
+ \c clojure 
 
 CREATE TABLE patients (
   id SERIAL NOT NULL PRIMARY KEY,

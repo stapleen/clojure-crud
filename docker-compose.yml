@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=root
+    ports:
+      - 5432:5432
+    volumes:
+      - "./db:/docker-entrypoint-initdb.d"
+  backend:
+    build: ./backend/backend
+    ports: 
+      - 3000:3000
+    links:
+      - db
+    depends_on:
+      - db
+  # frontend:
+  #   build: ./frontend
+  #   ports: 
+  #     - 3449:3449
+  #   links:
+  #     - backend
+  #   depends_on:
+  #     - backend

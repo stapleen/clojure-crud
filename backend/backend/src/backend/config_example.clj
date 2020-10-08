@@ -2,7 +2,7 @@
 
 (def db-config {:dbtype "type"
                 :dbname "name"
-                :host "host"
+                :host "db"
                 :user "user"
                 :password "password"})
 
