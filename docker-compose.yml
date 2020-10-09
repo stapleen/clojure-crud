@@ -16,11 +16,11 @@ services:
       - db
     depends_on:
       - db
-  # frontend:
-  #   build: ./frontend
-  #   ports: 
-  #     - 3449:3449
-  #   links:
-  #     - backend
-  #   depends_on:
-  #     - backend
+  frontend:
+    build: ./frontend
+    ports: 
+      - 8080:80
+    links:
+      - backend
+    depends_on:
+      - backend
