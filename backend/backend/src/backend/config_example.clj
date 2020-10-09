@@ -1,9 +1,9 @@
 (ns backend.config)
 
 (def db-config {:dbtype "postgresql"
-                :dbname "name"
+                :dbname "clojure"
                 :host "db"
-                :user "user"
+                :user "postgres"
                 :password "password"})
 
 (def port 3000)
