@@ -6,7 +6,7 @@
             [clojure.java.jdbc :as jdbc]
             [backend.config :as config]
             [ring.middleware.json :as middleware]
-            [ring.util.response :refer [response]]
+            [ring.util.response :refer [response bad-request]]
             [ring.middleware.cors :refer [wrap-cors]]
             [bouncer.core :as b]
             [bouncer.validators :as v]))
@@ -42,15 +42,15 @@
                                       :date_of_birth (convert-string-to-date date-of-birth)
                                       :created_at current-date-convert-time-stamp})
           (response {:success 1 :result "Успешно"}))
-        (response {:success 0 :error "Некорректные данные"})))
+        (bad-request {:success 0 :error "Некорректные данные"})))
     (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defn get-patients [request]
-(try
-  (let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
+  (try
+    (let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
   FROM patients WHERE deleted=false"])]
-    (response {:success 1 :result patients-list}))
-  (catch Exception e (response {:success 0 :error "Ошибка"}))))
+      (response {:success 1 :result patients-list}))
+    (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defn get-patient [request]
   (try
@@ -105,7 +105,7 @@
                           current-date-convert-time-stamp
                           id])
           (response {:success 1 :result "Успешно"}))
-        (response {:success 0 :error "Некорректные данные"})))
+        (bad-request {:success 0 :error "Некорректные данные"})))
     (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defroutes app
