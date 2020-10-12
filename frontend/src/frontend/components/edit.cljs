@@ -4,6 +4,7 @@
    [reagent.core :as r]
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
+   [moment :as moment]
    [reagent-material-ui.core.circular-progress :refer [circular-progress]]
    [frontend.config :as config]
    [frontend.components.input :as input]
@@ -41,7 +42,7 @@
             (reset! loading? false)
             (reset! full-name patient-name)
             (reset! gender patient-gender)
-            (reset! date-of-birth (subs patient-birth 0 10)))))
+            (reset! date-of-birth(.format  (moment. patient-birth) "YYYY-MM-DD")))))
 
     :reagent-render
     (fn [id]
