@@ -30,7 +30,7 @@
           current-date (.getTime (java.util.Date.))
           current-date-convert-time-stamp (date-to-time-stamp current-date)
           validator (b/validate body
-                                ["full_name"]   [v/required v/string]
+                                ["full_name"] [v/required v/string]
                                 ["gender"] [v/required v/string [v/matches #"^М$|^Ж$"]]
                                 ["date_of_birth"] [v/required
                                                    v/string
@@ -68,40 +68,44 @@
    (let [body (get-in request [:body])
          patient-id (get-in request [:body "id"])
          current-date (.getTime (java.util.Date.))
-         current-date-convert-time-stamp (date-to-time-stamp current-date)
-         query-result (jdbc/update! db :patients
-                                    {:deleted true :updated_at current-date-convert-time-stamp}
-                                    ["id = ?" patient-id])]  
-     (if (zero? (first query-result))
-       (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
-       (response {:success 1 :result "Успешно"})))
+         current-date-convert-time-stamp (date-to-time-stamp current-date)]
+
+     (jdbc/update! db :patients
+                   {:deleted true :updated_at current-date-convert-time-stamp}
+                   ["id = ?" patient-id])
+     (response {:success 1 :result "Успешно"}))
    (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defn update-patient-data
   [request]
   (try
     (let [body (get-in request [:body])
-          id (get-in request [:body "id"])
-          full-name (get-in request [:body "full_name"])
-          gender (get-in request [:body "gender"])
-          date-of-birth (get-in request [:body "date_of_birth"])
-          date-of-birth-convert-date (convert-string-to-date date-of-birth)
+          id (get-in body ["id"])
+          full-name (get-in body ["full_name"])
+          gender (get-in body ["gender"])
+          date-of-birth (get-in body ["date_of_birth"])
           current-date (.getTime (java.util.Date.))
           current-date-convert-time-stamp (date-to-time-stamp current-date)
-          query-result (jdbc/execute! db
-                                      ["UPDATE patients SET full_name = COALESCE(?, full_name),
+          validator (b/validate body
+                                ["full_name"] [v/required v/string]
+                                ["gender"] [ v/string [v/matches #"^М$|^Ж$"]]
+                                ["date_of_birth"] [v/string
+                                                   [v/matches #"^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$"]])]
+      (if (nil? (first validator))
+        (do
+          (jdbc/execute! db
+                         ["UPDATE patients SET full_name = COALESCE(?, full_name),
                    gender = COALESCE(?, gender),
                    date_of_birth = COALESCE(?, date_of_birth),
                    updated_at = ?
                    WHERE id = ?"
-                                       full-name
-                                       gender
-                                       date-of-birth-convert-date
-                                       current-date-convert-time-stamp
-                                       id])]
-      (if (zero? (first query-result))
-        (response {:success 0 :error "Ошибка. Попробуйте повторить позже"})
-        (response {:success 1 :result "Успешно"})))
+                          full-name
+                          gender
+                          (convert-string-to-date date-of-birth)
+                          current-date-convert-time-stamp
+                          id])
+          (response {:success 1 :result "Успешно"}))
+        (response {:success 0 :error "Некорректные данные"})))
     (catch Exception e (response {:success 0 :error "Ошибка"}))))
 
 (defroutes app
