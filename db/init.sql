@@ -11,3 +11,6 @@ CREATE TABLE patients (
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ  
 );
+
+INSERT INTO patients (full_name, gender, date_of_birth) values ('Вадим', 'М', '2020-09-15'),
+('Тестовый Вадим', 'Ж', '2010-01-01');
