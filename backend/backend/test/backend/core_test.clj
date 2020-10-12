@@ -13,7 +13,7 @@
 
 (deftest insert-patient-test
   (testing "insert-patient-test"
-    (let [request {:body {"full_name" "unique_test_name", "gender" "M", "date_of_birth" "2015-10-10"}}]
+    (let [request {:body {"full_name" "unique_test_name", "gender" "М", "date_of_birth" "2015-10-10"}}]
       (add-patients request)
       (let [result (jdbc/query db ["SELECT full_name FROM patients WHERE full_name='unique_test_name'"])
             full-name (get-in (first result) [:full_name])]

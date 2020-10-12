@@ -7,7 +7,9 @@
             [backend.config :as config]
             [ring.middleware.json :as middleware]
             [ring.util.response :refer [response]]
-            [ring.middleware.cors :refer [wrap-cors]]))
+            [ring.middleware.cors :refer [wrap-cors]]
+            [bouncer.core :as b]
+            [bouncer.validators :as v]))
 
 (def db config/db-config)
 (def port config/port)
@@ -22,19 +24,27 @@
   [request]
   (try
     (let [body (get-in request [:body])
-          full-name (get-in request [:body "full_name"])
-          gender (get-in request [:body "gender"])
-          date-of-birth (get-in request [:body "date_of_birth"])
-          date-of-birth-convert-date (convert-string-to-date date-of-birth)
+          full-name (get-in body ["full_name"])
+          gender (get-in body ["gender"])
+          date-of-birth (get-in body ["date_of_birth"])
           current-date (.getTime (java.util.Date.))
-          current-date-convert-time-stamp (date-to-time-stamp current-date)]     
-      (jdbc/insert! db :patients {:full_name full-name
-                                  :gender gender
-                                  :date_of_birth date-of-birth-convert-date
-                                  :created_at current-date-convert-time-stamp})
-      (response {:success 1 :result "Успешно"}))
+          current-date-convert-time-stamp (date-to-time-stamp current-date)
+          validator (b/validate body
+                                ["full_name"]   [v/required v/string]
+                                ["gender"] [v/required v/string [v/matches #"^М$|^Ж$"]]
+                                ["date_of_birth"] [v/required
+                                                   v/string
+                                                   [v/matches #"^\d{4}\-(0[1-9]|1[012])\-(0[1-9]|[12][0-9]|3[01])$"]])]
+      (if (nil? (first validator))
+        (do
+          (jdbc/insert! db :patients {:full_name full-name
+                                      :gender gender
+                                      :date_of_birth (convert-string-to-date date-of-birth)
+                                      :created_at current-date-convert-time-stamp})
+          (response {:success 1 :result "Успешно"}))
+        (response {:success 0 :error "Некорректные данные"})))
     (catch Exception e (response {:success 0 :error "Ошибка"}))))
-   
+
 (defn get-patients [request]
 (try
   (let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
