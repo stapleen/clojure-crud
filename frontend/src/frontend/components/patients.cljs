@@ -23,6 +23,7 @@
 (defn component
   []
   (let [patients (r/atom nil)
+        error (r/atom nil)
         severity (r/atom nil)
         message (r/atom nil)
         loading? (r/atom true)
@@ -72,16 +73,16 @@
               [paper
                [icon-btn/component [add]
                 (fn [] (set! (.. js/document -location -href) "#/new"))]
-               ([table-container
-                 [table
-                  [table-head
-                   [table-row
-                    [table-cell "Полное имя"]
-                    [table-cell "Пол"]
-                    [table-cell "Дата рождения"]
-                    [table-cell ""]]]
-                  [table-body
-                   patients-list]]])])]
+               [table-container
+                [table
+                 [table-head
+                  [table-row
+                   [table-cell "Полное имя"]
+                   [table-cell "Пол"]
+                   [table-cell "Дата рождения"]
+                   [table-cell ""]]]
+                 [table-body
+                  patients-list]]]])]
 
       (r/create-class
        {:display-name  "patients"
@@ -89,17 +90,22 @@
         :component-did-mount
         (fn [this]
           (go (let [response (<! (http/get (str config/url "/get")))
-                    result (get-in response [:body :result])]
-                (reset! patients result)
+                    status (get-in response [:status])]
+                (cond
+                  (= status 200) (reset! patients (get-in response [:body :result]))
+                  (= status 500) (reset! error "Ошибка сервера"))
                 (reset! loading? false))))
 
         :reagent-render
         (fn []
-          (let [patients-list (render-patients @patients)]
-            (if (true? @loading?) [circular-progress {:color "secondary"}]
-                (if (empty? patients-list)
-                  [:div
-                   [icon-btn/component [add]
-                    (fn [] (set! (.. js/document -location -href) "#/new"))]
-                   [:p "Список пациентов пуст"]]
-                  (render-table patients-list)))))}))))
+          (println "patients" @patients "error" @error "loading" @loading?)
+
+          (if (true? @loading?) [circular-progress {:color "secondary"}]
+              (if (nil? @patients) [:p "Ошибка сервера"]
+                  (let [patients-list (render-patients @patients)]
+                    (if (empty? patients-list)
+                      [:div
+                       [icon-btn/component [add]
+                        (fn [] (set! (.. js/document -location -href) "#/new"))]
+                       [:p "Список пациентов пуст"]]
+                      (render-table patients-list))))))}))))
