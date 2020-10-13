@@ -98,8 +98,6 @@
 
         :reagent-render
         (fn []
-          (println "patients" @patients "error" @error "loading" @loading?)
-
           (if (true? @loading?) [circular-progress {:color "secondary"}]
               (if (nil? @patients) [:p "Ошибка сервера"]
                   (let [patients-list (render-patients @patients)]
