@@ -12,9 +12,6 @@
    [reagent-material-ui.core.paper :refer [paper]]
    [frontend.components.snackbar :as snackbar]))
 
-(defn go-home []
-  (set! (.. js/document -location -href) "#/"))
-
 (defn component
   []
   (let [full-name (r/atom "")
@@ -23,36 +20,42 @@
         severity (r/atom nil)
         message (r/atom nil)
         open? (r/atom false)]
+        
+    (letfn [(show-error-message [text]
+                                ((reset! severity "error")
+                                 (reset! open? true)
+                                 (reset! message text)))
+            (go-home []
+                     (set! (.. js/document -location -href) "#/"))]
 
-    (r/create-class
-     {:display-name  "patient-add"
+      (r/create-class
+       {:display-name  "patient-add"
 
-      :reagent-render
-      (fn []
-        [paper
-         [:div {:class "form"}
-          [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
-          [:p "Добавление пациента"]
-          [input/component "outlined" @full-name "ФИО" #(reset! full-name (-> % .-target .-value)) false]
-          [select/component @gender #(reset! gender (-> % .-target .-value)) "Пол"]
-          [picker/component "outlined" @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
-          [:div {:class "buttons"}
-           [button/component
-            "outlined"
-            (fn []
-              (go (let [response (<! (http/post (str config/url "/add")
-                                                {:json-params
-                                                 {:full_name @full-name
-                                                  :gender @gender
-                                                  :date_of_birth @date-of-birth}}))
-                        success (get-in response [:body :success])]
-                    (if (zero? success)
-                      (do ((reset! severity "error")
-                           (reset! open? true)
-                           (reset! message (get-in response [:body :error]))))
-                      (go-home)))))
-            "Добавить"]
-           [button/component
-            "outlined"
-            (fn [] (go-home))
-            "Отмена"]]]])})))
+        :reagent-render
+        (fn []
+          [paper
+           [:div {:class "form"}
+            [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
+            [:p "Добавление пациента"]
+            [input/component "outlined" @full-name "ФИО" #(reset! full-name (-> % .-target .-value)) false]
+            [select/component @gender #(reset! gender (-> % .-target .-value)) "Пол"]
+            [picker/component "outlined" @date-of-birth #(reset! date-of-birth (-> % .-target .-value))]
+            [:div {:class "buttons"}
+             [button/component
+              "outlined"
+              (fn []
+                (go (let [response (<! (http/post (str config/url "/add")
+                                                  {:json-params
+                                                   {:full_name @full-name
+                                                    :gender @gender
+                                                    :date_of_birth @date-of-birth}}))
+                          status (get-in response [:status])]
+                      (cond
+                        (= status 500) (show-error-message "Ошибка сервера")
+                        (= status 400) (show-error-message (get-in response [:body :error]))
+                        (= status 200) (go-home)))))
+              "Добавить"]
+             [button/component
+              "outlined"
+              (fn [] (go-home))
+              "Отмена"]]]])}))))

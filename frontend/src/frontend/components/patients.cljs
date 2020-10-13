@@ -28,19 +28,20 @@
         loading? (r/atom true)
         open? (r/atom false)]
 
-    (r/create-class
-     {:display-name  "patients"
+    (letfn [(show-error-message [text]
+              ((reset! severity "error")
+               (reset! open? true)
+               (reset! message text)))
 
-      :component-did-mount
-      (fn [this]
-        (go (let [response (<! (http/get (str config/url "/get")))
-                  result (get-in response [:body :result])]
-              (reset! patients result)
-              (reset! loading? false))))
+            (success-response [text id]
+              ((reset! severity "success")
+               (reset! message text)
+               (reset! patients
+                       (filterv
+                        (fn [x] (not= (get-in x [:id]) id)) @patients))
+               (reset! open? true)))
 
-      :reagent-render
-      (fn []
-        (let [patients-list
+            (render-patients [patients]
               (map #(let [id (get-in % [:id])
                           full-name (get-in % [:full_name])
                           gender (get-in % [:gender])
@@ -59,34 +60,46 @@
                           (fn []
                             (go (let [response (<! (http/post (str config/url "/delete")
                                                               {:json-params {:id id}}))
-                                      success (get-in response [:body :success])]
-                                  (if (zero? success)
-                                    (do ((reset! severity "error")
-                                         (reset! open? true)
-                                         (reset! message (get-in response [:body :error]))))
-                                    (do ((reset! severity "success")
-                                         (reset! message (get-in response [:body :result]))
-                                         (reset! patients
-                                                 (filterv
-                                                  (fn [x] (not= (get-in x [:id]) id)) @patients))
-                                         (reset! open? true)))))))]]]])
-                   @patients)]
-          (if (true? @loading?) [circular-progress {:color "secondary"}]
-              (if (empty? patients-list)
-                [:div
-                 [icon-btn/component [add]
-                  (fn [] (set! (.. js/document -location -href) "#/new"))]
-                 [:p "Список пациентов пуст"]]
-                [paper
-                 [icon-btn/component [add]
-                  (fn [] (set! (.. js/document -location -href) "#/new"))]
-                 [table-container
-                  [table
-                   [table-head
-                    [table-row
-                     [table-cell "Полное имя"]
-                     [table-cell "Пол"]
-                     [table-cell "Дата рождения"]
-                     [table-cell ""]]]
-                   [table-body
-                    patients-list]]]]))))})))
+                                      status (get-in response [:status])]
+                                  (cond
+                                    (= status 500) (show-error-message "Ошибка сервера")
+                                    (= status 200) (if (zero? (get-in response [:body :success]))
+                                                     (show-error-message (get-in response [:body :error]))
+                                                     (success-response (get-in response [:body :result]) id))))))]]]])
+                   patients))
+
+            (render-table [patients-list]
+              [paper
+               [icon-btn/component [add]
+                (fn [] (set! (.. js/document -location -href) "#/new"))]
+               ([table-container
+                 [table
+                  [table-head
+                   [table-row
+                    [table-cell "Полное имя"]
+                    [table-cell "Пол"]
+                    [table-cell "Дата рождения"]
+                    [table-cell ""]]]
+                  [table-body
+                   patients-list]]])])]
+
+      (r/create-class
+       {:display-name  "patients"
+
+        :component-did-mount
+        (fn [this]
+          (go (let [response (<! (http/get (str config/url "/get")))
+                    result (get-in response [:body :result])]
+                (reset! patients result)
+                (reset! loading? false))))
+
+        :reagent-render
+        (fn []
+          (let [patients-list (render-patients @patients)]
+            (if (true? @loading?) [circular-progress {:color "secondary"}]
+                (if (empty? patients-list)
+                  [:div
+                   [icon-btn/component [add]
+                    (fn [] (set! (.. js/document -location -href) "#/new"))]
+                   [:p "Список пациентов пуст"]]
+                  (render-table patients-list)))))}))))

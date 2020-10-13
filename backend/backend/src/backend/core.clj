@@ -6,7 +6,7 @@
             [clojure.java.jdbc :as jdbc]
             [backend.config :as config]
             [ring.middleware.json :as middleware]
-            [ring.util.response :refer [response bad-request]]
+            [ring.util.response :refer [response bad-request status]]
             [ring.middleware.cors :refer [wrap-cors]]
             [bouncer.core :as b]
             [bouncer.validators :as v]))
@@ -43,14 +43,14 @@
                                       :created_at current-date-convert-time-stamp})
           (response {:success 1 :result "Успешно"}))
         (bad-request {:success 0 :error "Некорректные данные"})))
-    (catch Exception e (response {:success 0 :error "Ошибка"}))))
+    (catch Exception e (status 500))))
 
 (defn get-patients [request]
   (try
     (let [patients-list (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
   FROM patients WHERE deleted=false"])]
       (response {:success 1 :result patients-list}))
-    (catch Exception e (response {:success 0 :error "Ошибка"}))))
+    (catch Exception e (status 500))))
 
 (defn get-patient [request]
   (try
@@ -60,8 +60,7 @@
       patient (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
       FROM patients WHERE id = ? AND deleted=false" id])]
       (response {:success 1 :result patient}))
-    (catch Exception e (response
-                        {:success 0 :error "Ошибка"}))))
+    (catch Exception e (status 500))))
 
 (defn delete-patient [request]
  (try
@@ -74,7 +73,7 @@
                    {:deleted true :updated_at current-date-convert-time-stamp}
                    ["id = ?" patient-id])
      (response {:success 1 :result "Успешно"}))
-   (catch Exception e (response {:success 0 :error "Ошибка"}))))
+   (catch Exception e (status 500))))
 
 (defn update-patient-data
   [request]
@@ -106,7 +105,7 @@
                           id])
           (response {:success 1 :result "Успешно"}))
         (bad-request {:success 0 :error "Некорректные данные"})))
-    (catch Exception e (response {:success 0 :error "Ошибка"}))))
+    (catch Exception e (status 500))))
 
 (defroutes app
   (POST "/add" [] (-> add-patients middleware/wrap-json-body middleware/wrap-json-response))
