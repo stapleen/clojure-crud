@@ -7,7 +7,7 @@
    [moment :as moment]
    [reagent-material-ui.core.circular-progress :refer [circular-progress]]
    [frontend.config :as config]
-   [frontend.routes :refer [new edit]]
+   [frontend.routes :refer [patient-new patient-edit]]
    [reagent-material-ui.core.table :refer [table]]
    [reagent-material-ui.core.table-body :refer [table-body]]
    [reagent-material-ui.core.table-cell :refer [table-cell]]
@@ -58,7 +58,7 @@
                         [:div {:class "tableButtons"}
                          [snackbar/component @open? (fn [] (reset! open? false)) @severity @message]
                          [icon-btn/component [edit]
-                          (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))]
+                          (fn [] (set! (.. js/document -location -href) (str "#" patient-edit "/" id)))]
                          [icon-btn/component [delete-forever]
                           (fn []
                             (go (let [response (<! (http/post (str config/url "/patient/delete")
@@ -74,7 +74,7 @@
             (render-table [patients-list]
               [paper
                [icon-btn/component [add]
-                (fn [] (set! (.. js/document -location -href) (str "#" new)))]
+                (fn [] (set! (.. js/document -location -href) (str "#" patient-new)))]
                [table-container
                 [table
                  [table-head
@@ -100,13 +100,13 @@
 
         :reagent-render
         (fn []
-        (println "new" new "edit" edit)
+        (println "edit" edit "route-slug")
           (if (true? @loading?) [circular-progress {:color "secondary"}]
               (if (nil? @patients) [:p "Ошибка сервера"]
                   (let [patients-list (render-patients @patients)]
                     (if (empty? patients-list)
                       [:div
                        [icon-btn/component [add]
-                        (fn [] (set! (.. js/document -location -href) (str "#" new)))]
+                        (fn [] (set! (.. js/document -location -href)  (str "#" patient-new)))]
                        [:p "Список пациентов пуст"]]
                       (render-table patients-list))))))}))))
