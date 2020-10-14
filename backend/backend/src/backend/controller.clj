@@ -47,19 +47,17 @@
 
 (defn get-patient [request]
   (try
-    (let [id (get-in request [:body "id"])
+    (let [id (Integer. (get-in request [:query-params "id"]))
           patient (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
       FROM patients WHERE id = ? AND deleted=false" id])]
       (response {:success 1 :result patient}))
-    (catch Exception e (status 500))))
+    (catch Exception e (status 400))))
 
 (defn delete-patient [request]
  (try
-   (let [body (get-in request [:body])
-         patient-id (get-in request [:body "id"])
+   (let [patient-id (get-in request [:body "id"])
          current-date (.getTime (java.util.Date.))
          current-date-convert-time-stamp (date-to-time-stamp current-date)]
-
      (jdbc/update! db :patients
                    {:deleted true :updated_at current-date-convert-time-stamp}
                    ["id = ?" patient-id])

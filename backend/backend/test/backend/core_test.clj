@@ -44,7 +44,7 @@
                                               :gender "М"
                                               :date_of_birth (convert-string-to-date "2020-01-01")})
           id-patient (get-in (first patient) [:id])
-          request {:body {"id" id-patient}}
+          request {:query-params {"id" id-patient}}
           result (get-in (get-patient request) [:body :result])]
       (jdbc/delete! db :patients ["id = ?" id-patient])
       (is (= false (empty? result))))))

@@ -40,7 +40,7 @@
 
         :component-did-mount
         (fn [this]
-          (go (let [response (<! (http/post (str config/url "/patient") {:json-params {:id id}}))
+          (go (let [response (<! (http/get (str config/url "/patient") {:query-params {:id id}}))
                     result (get-in response [:body :result])
                     patient (first result)
                     patient-name (get-in patient [:full_name])

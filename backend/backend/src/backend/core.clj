@@ -4,6 +4,7 @@
             [compojure.core :refer :all]
             [compojure.route :as route]
             [ring.middleware.json :refer [wrap-json-body wrap-json-response]]
+            [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.cors :refer [wrap-cors]]
             [backend.config :as config]
             [backend.controller :refer [add-patients get-patients get-patient
@@ -14,7 +15,7 @@
 (defroutes app
   (POST "/patient/add" [] (-> add-patients wrap-json-body wrap-json-response))
   (GET "/" [] (-> get-patients wrap-json-response))
-  (POST "/patient" [] (-> get-patient wrap-json-body wrap-json-response))
+  (GET "/patient" [] (-> get-patient wrap-params wrap-json-response))
   (POST "/patient/delete" [] (-> delete-patient wrap-json-body wrap-json-response))
   (POST "/patient/update" [] (-> update-patient-data wrap-json-body wrap-json-response)))
 
