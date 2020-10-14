@@ -59,7 +59,7 @@
                           (fn [] (set! (.. js/document -location -href) (str "#/edit/" id)))]
                          [icon-btn/component [delete-forever]
                           (fn []
-                            (go (let [response (<! (http/post (str config/url "/delete")
+                            (go (let [response (<! (http/post (str config/url "/patient/delete")
                                                               {:json-params {:id id}}))
                                       status (get-in response [:status])]
                                   (cond
@@ -89,7 +89,7 @@
 
         :component-did-mount
         (fn [this]
-          (go (let [response (<! (http/get (str config/url "/get")))
+          (go (let [response (<! (http/get (str config/url "/")))
                     status (get-in response [:status])]
                 (cond
                   (= status 200) (reset! patients (get-in response [:body :result]))

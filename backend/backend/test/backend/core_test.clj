@@ -1,6 +1,6 @@
 (ns backend.core-test
   (:require [clojure.test :refer :all]
-            [backend.core :refer :all]
+            [backend.controller :refer :all]
             [clojure.java.jdbc :as jdbc]))
 
 (deftest convert-string-to-date-test

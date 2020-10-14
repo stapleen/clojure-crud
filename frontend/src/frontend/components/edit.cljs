@@ -39,7 +39,7 @@
 
         :component-did-mount
         (fn [this]
-          (go (let [response (<! (http/post (str config/url "/get/patient") {:json-params {:id id}}))
+          (go (let [response (<! (http/post (str config/url "/patient") {:json-params {:id id}}))
                     result (get-in response [:body :result])
                     patient (first result)
                     patient-name (get-in patient [:full_name])
@@ -67,7 +67,7 @@
                    [button/component
                     "outlined"
                     (fn []
-                      (go (let [response (<! (http/post (str config/url "/update")
+                      (go (let [response (<! (http/post (str config/url "/patient/update")
                                                         {:json-params {:id id
                                                                        :full_name @full-name
                                                                        :gender @gender

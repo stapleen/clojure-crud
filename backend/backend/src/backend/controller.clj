@@ -47,10 +47,8 @@
 
 (defn get-patient [request]
   (try
-    (let
-     [body (get-in request [:body])
-      id (get-in request [:body "id"])
-      patient (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
+    (let [id (get-in request [:body "id"])
+          patient (jdbc/query db ["SELECT id, full_name, gender, date_of_birth 
       FROM patients WHERE id = ? AND deleted=false" id])]
       (response {:success 1 :result patient}))
     (catch Exception e (status 500))))

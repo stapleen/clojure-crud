@@ -14,7 +14,7 @@
 (defroutes app
   (POST "/patient/add" [] (-> add-patients wrap-json-body wrap-json-response))
   (GET "/" [] (-> get-patients wrap-json-response))
-  (GET "/patient" [] (-> get-patient wrap-json-body wrap-json-response))
+  (POST "/patient" [] (-> get-patient wrap-json-body wrap-json-response))
   (POST "/patient/delete" [] (-> delete-patient wrap-json-body wrap-json-response))
   (POST "/patient/update" [] (-> update-patient-data wrap-json-body wrap-json-response)))
 

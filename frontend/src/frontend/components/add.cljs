@@ -44,7 +44,7 @@
              [button/component
               "outlined"
               (fn []
-                (go (let [response (<! (http/post (str config/url "/add")
+                (go (let [response (<! (http/post (str config/url "/patient/add")
                                                   {:json-params
                                                    {:full_name @full-name
                                                     :gender @gender
