@@ -19,8 +19,7 @@
    [frontend.components.icon-btn :as icon-btn]
    [reagent-material-ui.icons.delete-forever :refer [delete-forever]]
    [reagent-material-ui.icons.edit :refer [edit]]
-   [reagent-material-ui.icons.add :refer [add]]
-   ))
+   [reagent-material-ui.icons.add :refer [add]]))
 
 (defn component
   []

@@ -6,13 +6,11 @@
    [goog.events :as events]
    [reagent.core :as reagent]))
 
-
 (def route-slug {:home "/" :new "/new" :edit "/edit"})
 
 (def home (get-in route-slug [:home]))
 (def patient-new (get-in route-slug [:new]))
 (def patient-edit (get-in route-slug [:edit]))
-
 
 (def app-state (reagent/atom {}))
 
