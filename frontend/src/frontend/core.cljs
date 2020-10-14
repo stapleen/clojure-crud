@@ -6,25 +6,17 @@
    [frontend.components.patient.add :as add]
    [frontend.routes :refer [app-routes app-state]]))
 
-(defn home []
-  [patients/component])
-
-(defn new []
-  [add/component])
-
-(defn edit [id]
-  [edit/component id])
-
 (defmulti current-page #(@app-state :page))
 
 (defmethod current-page :home []
-  [home])
+  [patients/component])
 
 (defmethod current-page :new []
-  [new])
+  [add/component])
 
 (defmethod current-page :edit []
-  [edit (int (get-in @app-state [:id]))])
+  (let [id (int (get-in @app-state [:id]))]
+    [edit/component id]))
 
 (defn init! []
   (app-routes)
