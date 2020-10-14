@@ -1,33 +1,10 @@
 (ns frontend.core
-(:import [goog History]
-           [goog.history EventType])
-  (:require 
-            [secretary.core :as secretary :refer-macros [defroute]]
-            [goog.events :as events]
-            [reagent.core :as reagent]
-            [reagent.dom :as d]
-            [frontend.components.patients :as patients]
-            [frontend.components.patient.edit :as edit]
-            [frontend.components.patient.add :as add]))
-
-(def app-state (reagent/atom {}))
-
-(defn app-routes []
-  (secretary/set-config! :prefix "")
-
-  (defroute "/" []
-    (swap! app-state assoc :page :home))
-
-  (defroute "/new" []
-    (swap! app-state assoc :page :new))
-
-  (defroute "/edit/:id" [id]
-    (swap! app-state assoc :page :edit :id id))
-
-    (doto (History.)
-      (events/listen EventType.NAVIGATE #(secretary/dispatch! (.-token %)))
-      (.setEnabled true))
-)
+  (:require
+   [reagent.dom :as d]
+   [frontend.components.patients :as patients]
+   [frontend.components.patient.edit :as edit]
+   [frontend.components.patient.add :as add]
+   [frontend.routes :refer [app-routes app-state]]))
 
 (defn home []
   [patients/component])

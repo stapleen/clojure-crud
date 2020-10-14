@@ -7,6 +7,7 @@
    [moment :as moment]
    [reagent-material-ui.core.circular-progress :refer [circular-progress]]
    [frontend.config :as config]
+   [frontend.routes :refer [home]]
    [frontend.components.input :as input]
    [frontend.components.select :as select]
    [frontend.components.button :as button]
@@ -15,7 +16,7 @@
    [frontend.components.snackbar :as snackbar]))
 
 (defn go-home []
-  (set! (.. js/document -location -href) "#/"))
+  (set! (.. js/document -location -href) (str "#" home)))
 
 (defn component
   [id]

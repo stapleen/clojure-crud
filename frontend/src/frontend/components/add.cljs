@@ -5,6 +5,7 @@
    [cljs-http.client :as http]
    [cljs.core.async :refer [<!]]
    [frontend.config :as config]
+   [frontend.routes :refer [home]]
    [frontend.components.input :as input]
    [frontend.components.select :as select]
    [frontend.components.button :as button]
@@ -26,7 +27,7 @@
                                  (reset! open? true)
                                  (reset! message text)))
             (go-home []
-                     (set! (.. js/document -location -href) "#/"))]
+                     (set! (.. js/document -location -href) (str "#" home)))]
 
       (r/create-class
        {:display-name  "patient-add"

@@ -7,6 +7,7 @@
    [moment :as moment]
    [reagent-material-ui.core.circular-progress :refer [circular-progress]]
    [frontend.config :as config]
+   [frontend.routes :refer [new edit]]
    [reagent-material-ui.core.table :refer [table]]
    [reagent-material-ui.core.table-body :refer [table-body]]
    [reagent-material-ui.core.table-cell :refer [table-cell]]
@@ -18,7 +19,8 @@
    [frontend.components.icon-btn :as icon-btn]
    [reagent-material-ui.icons.delete-forever :refer [delete-forever]]
    [reagent-material-ui.icons.edit :refer [edit]]
-   [reagent-material-ui.icons.add :refer [add]]))
+   [reagent-material-ui.icons.add :refer [add]]
+   ))
 
 (defn component
   []
@@ -72,7 +74,7 @@
             (render-table [patients-list]
               [paper
                [icon-btn/component [add]
-                (fn [] (set! (.. js/document -location -href) "#/new"))]
+                (fn [] (set! (.. js/document -location -href) (str "#" new)))]
                [table-container
                 [table
                  [table-head
@@ -98,12 +100,13 @@
 
         :reagent-render
         (fn []
+        (println "new" new "edit" edit)
           (if (true? @loading?) [circular-progress {:color "secondary"}]
               (if (nil? @patients) [:p "Ошибка сервера"]
                   (let [patients-list (render-patients @patients)]
                     (if (empty? patients-list)
                       [:div
                        [icon-btn/component [add]
-                        (fn [] (set! (.. js/document -location -href) "#/new"))]
+                        (fn [] (set! (.. js/document -location -href) (str "#" new)))]
                        [:p "Список пациентов пуст"]]
                       (render-table patients-list))))))}))))
