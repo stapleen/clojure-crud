@@ -22,8 +22,3 @@ lein test
 cd ./frontend
 lein figwheel
 ```
-### run tests on frontend
-```
-cd ./backend/backend/src
-
-```
