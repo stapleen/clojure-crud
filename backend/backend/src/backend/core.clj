@@ -13,15 +13,16 @@
 (def port config/port)
 
 (defroutes app
-  (POST "/patient/add" [] (-> add-patients wrap-json-body wrap-json-response))
+  (POST "/patient/add" [] (-> add-patients wrap-json-body))
   (GET "/" [] (-> get-patients wrap-json-response))
-  (GET "/patient" [] (-> get-patient wrap-params wrap-json-response))
-  (POST "/patient/delete" [] (-> delete-patient wrap-json-body wrap-json-response))
-  (POST "/patient/update" [] (-> update-patient-data wrap-json-body wrap-json-response)))
+  (GET "/patient" [] (-> get-patient wrap-params))
+  (POST "/patient/delete" [] (-> delete-patient wrap-json-body))
+  (POST "/patient/update" [] (-> update-patient-data wrap-json-body)))
 
 (defn -main []
   (jetty/run-jetty (-> app (wrap-cors
                             :access-control-allow-origin [#".*"]
                             :access-control-allow-methods [:get :post]
-                            :access-control-allow-credentials ["true"]))
+                            :access-control-allow-credentials ["true"])
+                       wrap-json-response)
                    {:port port}))
