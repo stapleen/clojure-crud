@@ -4,6 +4,6 @@
                 :dbname "clojure"
                 :host "db"
                 :user "postgres"
-                :password "password"})
+                :password "root"})
 
 (def port 3000)
