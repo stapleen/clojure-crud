@@ -12,6 +12,7 @@ backend/backend/.prepl-port
 backend/backend/.hgignore
 backend/backend/.hg/
 backend/backend/src/backend/config.clj
+backend/backend/.calva/
 
 frontend/target
 frontend/classes

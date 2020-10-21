@@ -11,6 +11,7 @@
                  [compojure "1.6.2"]
                  [org.clojure/java.jdbc "0.7.11"]
                  [org.postgresql/postgresql "42.1.4"]
-                 [bouncer "1.0.1"]]
+                 [bouncer "1.0.1"]
+                 [environ "1.2.0"]]
   :repl-options {:init-ns backend.core}
   :main ^:skip-aot backend.core)
