@@ -5,7 +5,7 @@
 
 (def db-config {:dbtype "postgresql"
                 :dbname (if (not (= type-env "prod")) "clojure_test" "clojure")
-                :host "localhost"
+                :host "db"
                 :user "postgres"
                 :password "root"})
 

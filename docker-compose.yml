@@ -10,6 +10,8 @@ services:
       - "./db:/docker-entrypoint-initdb.d"
   backend:
     build: ./backend/backend
+    environment:
+      - CLOJURE_ENV=prod
     ports: 
       - 3000:3000
     links:
